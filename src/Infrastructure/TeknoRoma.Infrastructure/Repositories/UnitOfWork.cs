@@ -11,12 +11,14 @@ public class UnitOfWork : IUnitOfWork
 
     public ICategoryRepository Categories { get; }
     public IProductRepository Products { get; }
+    public ISupplierRepository Suppliers { get; }
 
     public UnitOfWork(ApplicationDbContext context)
     {
         _context = context;
         Categories = new CategoryRepository(_context);
         Products = new ProductRepository(_context);
+        Suppliers = new SupplierRepository(_context);
     }
 
     public async Task<int> SaveChangesAsync()
