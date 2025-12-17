@@ -12,6 +12,10 @@ public class UnitOfWork : IUnitOfWork
     public ICategoryRepository Categories { get; }
     public IProductRepository Products { get; }
     public ISupplierRepository Suppliers { get; }
+    public IEmployeeRepository Employees { get; }
+    public ICustomerRepository Customers { get; }
+    public ISaleRepository Sales { get; }
+    public ISupplierTransactionRepository SupplierTransactions { get; }
 
     public UnitOfWork(ApplicationDbContext context)
     {
@@ -19,6 +23,10 @@ public class UnitOfWork : IUnitOfWork
         Categories = new CategoryRepository(_context);
         Products = new ProductRepository(_context);
         Suppliers = new SupplierRepository(_context);
+        Employees = new EmployeeRepository(_context);
+        Customers = new CustomerRepository(_context);
+        Sales = new SaleRepository(_context);
+        SupplierTransactions = new SupplierTransactionRepository(_context);
     }
 
     public async Task<int> SaveChangesAsync()

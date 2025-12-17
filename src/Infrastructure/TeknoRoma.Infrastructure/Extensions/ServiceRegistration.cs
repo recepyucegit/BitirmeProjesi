@@ -35,12 +35,20 @@ public static class ServiceRegistration
         services.AddScoped<ICategoryRepository, CategoryRepository>();
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<ISupplierRepository, SupplierRepository>();
+        services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+        services.AddScoped<ICustomerRepository, CustomerRepository>();
+        services.AddScoped<ISaleRepository, SaleRepository>();
+        services.AddScoped<ISupplierTransactionRepository, SupplierTransactionRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         // Services
         services.AddScoped<ICategoryService, CategoryService>();
         services.AddScoped<IProductService, ProductService>();
         services.AddScoped<ISupplierService, SupplierService>();
+        services.AddScoped<IEmployeeService, EmployeeService>();
+        services.AddScoped<ICustomerService, CustomerService>();
+        services.AddScoped<ISaleService, SaleService>();
+        services.AddScoped<ISupplierTransactionService, SupplierTransactionService>();
 
         return services;
     }
