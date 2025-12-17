@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using TeknoRoma.Domain.Entities;
@@ -14,6 +15,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<Category> Categories { get; set; }
     public DbSet<Product> Products { get; set; }
     public DbSet<Supplier> Suppliers { get; set; }
+    public DbSet<SupplierTransaction> SupplierTransactions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -21,6 +23,25 @@ public class ApplicationDbContext : DbContext
 
         // Otomatik olarak tüm IEntityTypeConfiguration sınıflarını yükle
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+
+        // Global query filter - IsDeleted = false olan kayıtları getir
+        foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+        {
+            if (typeof(BaseEntity).IsAssignableFrom(entityType.ClrType))
+            {
+                modelBuilder.Entity(entityType.ClrType)
+                    .HasQueryFilter(GenerateQueryFilter(entityType.ClrType));
+            }
+        }
+    }
+
+    private static LambdaExpression GenerateQueryFilter(Type entityType)
+    {
+        var parameter = Expression.Parameter(entityType, "e");
+        var property = Expression.Property(parameter, nameof(BaseEntity.IsDeleted));
+        var constant = Expression.Constant(false);
+        var body = Expression.Equal(property, constant);
+        return Expression.Lambda(body, parameter);
     }
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

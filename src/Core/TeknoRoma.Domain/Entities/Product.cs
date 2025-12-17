@@ -20,5 +20,5 @@ public class Product : BaseEntity
     public virtual Category? Category { get; set; }
     public virtual Supplier? Supplier { get; set; }
     // public virtual ICollection<SaleDetail>? SaleDetails { get; set; }
-    // public virtual ICollection<SupplierTransaction>? SupplierTransactions { get; set; }
+    public virtual ICollection<SupplierTransaction>? SupplierTransactions { get; set; }
 }

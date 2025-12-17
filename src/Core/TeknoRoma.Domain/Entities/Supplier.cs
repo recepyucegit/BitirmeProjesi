@@ -16,5 +16,5 @@ public class Supplier : BaseEntity
 
     // Navigation Properties
     public virtual ICollection<Product>? Products { get; set; }
-    // public virtual ICollection<SupplierTransaction>? SupplierTransactions { get; set; }
+    public virtual ICollection<SupplierTransaction>? SupplierTransactions { get; set; }
 }
