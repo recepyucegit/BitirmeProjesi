@@ -23,6 +23,9 @@ Proje katmanlı mimari ile geliştirilmiştir:
   - Customer, Employee
   - Sale, SaleDetail
   - SupplierTransaction, SupplierTransactionDetail
+  - User, Role, UserRole (Authentication & Authorization)
+  - Store (Multi-Store Management)
+  - Expense (Accounting & Approval Workflow)
 
 ### 2. Application Layer (Core)
 - **TeknoRoma.Application**: Business logic, DTOs, Interfaces
@@ -45,9 +48,21 @@ Proje katmanlı mimari ile geliştirilmiştir:
 
 ## Temel Özellikler
 
-### 1. Kullanıcı Yönetimi
-- Rol bazlı yetkilendirme sistemi
-- Kullanıcı grupları: Şube Müdürü, Kasa Satış, Depo, Muhasebe, Teknik Servis
+### 1. Kullanıcı ve Kimlik Doğrulama Sistemi
+- **JWT Token Authentication**: Güvenli oturum yönetimi
+- **Refresh Token**: Otomatik token yenileme
+- **Role-Based Authorization**: Rol bazlı yetkilendirme
+- **Password Security**: BCrypt ile güvenli şifre hashleme
+- **User Management**: Kullanıcı CRUD işlemleri
+- **Kullanıcı Rolleri**:
+  - Admin (Sistem Yöneticisi)
+  - BranchManager (Şube Müdürü)
+  - Cashier (Kasa Satış)
+  - Warehouse (Depo Sorumlusu)
+  - Accounting (Muhasebe)
+  - TechnicalService (Teknik Servis)
+- **User-Employee Linking**: Kullanıcı-çalışan ilişkilendirmesi
+- **Activity Tracking**: Son giriş tarihi takibi
 
 ### 2. Ürün Yönetimi
 - Kategori bazlı ürün organizasyonu
@@ -77,20 +92,57 @@ Proje katmanlı mimari ile geliştirilmiştir:
 - Personel kayıtları
 - Departman ve rol tanımlamaları
 - Maaş ve prim takibi
+- Şube ataması ve yönetimi
+
+### 6.1 Şube/Mağaza Yönetimi
+- **Multi-Store Support**: 55 mağaza yönetimi
+- **Store Information**: Mağaza detayları (isim, kod, adres, telefon, email)
+- **Manager Assignment**: Şube müdürü atama
+- **Store Metrics**: Aylık hedef ve kapasite takibi
+- **Opening Date Tracking**: Açılış tarihi bilgisi
+- **City & District**: Şehir ve ilçe bazlı gruplandırma
+- **Active/Inactive Status**: Aktif/pasif durum yönetimi
+- **Store-Based Operations**:
+  - Çalışan atama (Employee → Store)
+  - Satış takibi (Sale → Store)
+  - Gider takibi (Expense → Store)
 
 ### 7. Depo Yönetimi
 - Gerçek zamanlı stok takibi
 - Satış-depo entegrasyonu
 - Ürün hazırlama ve teslimat yönetimi
 
-### 8. Muhasebe Modülü
-- Gider takibi
-  - Çalışan ödemeleri
-  - Teknik altyapı giderleri
-  - Faturalar
-  - Diğer giderler
-- Döviz kuru entegrasyonu
-- Gelir-gider raporlaması
+### 8. Muhasebe ve Gider Yönetimi Modülü
+- **Comprehensive Expense Tracking**: Kapsamlı gider takibi
+  - Operational (Operasyonel giderler)
+  - Maintenance (Bakım onarım)
+  - Marketing (Pazarlama)
+  - Travel (Seyahat)
+  - Utility (Kamu hizmetleri)
+- **Multi-Currency Support**: Çoklu döviz desteği (TL, USD, EUR)
+  - Otomatik kur hesaplama
+  - TL'ye otomatik dönüştürme
+  - Exchange rate tracking
+- **Approval Workflow**: Onay iş akışı
+  - Status: Pending → Approved/Rejected → Paid
+  - Approver tracking (Onaylayan yönetici)
+  - Approval date and notes
+  - Only pending expenses can be modified
+- **Expense Categorization**:
+  - Category-based grouping
+  - Vendor/supplier information
+  - Invoice number tracking
+  - Payment method (BankTransfer, Cash, CreditCard, Check)
+- **Store & Employee Linking**:
+  - Expense → Store (Hangi şube gideri)
+  - Expense → Employee (Gider sorumlusu)
+  - Expense → Approver (Onaylayan)
+- **Financial Reporting**:
+  - Store-based expense reports
+  - Category-based expense analysis
+  - Date range filtering
+  - Total expenses calculation
+  - Pending expenses tracking
 
 ## Raporlama Sistemi
 
@@ -161,7 +213,12 @@ Proje katmanlı mimari ile geliştirilmiştir:
 - Customers (Müşteriler)
 - Employees (Çalışanlar)
 - Sales & SaleDetails (Satışlar)
-- SupplierTransactions (Tedarikçi Hareketleri)
+- SupplierTransactions & SupplierTransactionDetails (Tedarikçi Hareketleri)
+- Users (Kullanıcılar)
+- Roles (Roller)
+- UserRoles (Kullanıcı-Rol İlişkisi)
+- Stores (Mağazalar/Şubeler)
+- Expenses (Giderler)
 
 ### Özellikler
 - Referential Integrity
@@ -200,9 +257,44 @@ dotnet ef database update
 
 ## API Endpoints
 
-### Authentication
-- POST /api/auth/login
-- POST /api/auth/register
+### Authentication & User Management
+- POST /api/auth/login (JWT Token)
+- POST /api/auth/refresh-token (Token Yenileme)
+- POST /api/auth/register (Yeni Kullanıcı)
+- GET /api/users (Tüm Kullanıcılar)
+- GET /api/users/{id} (Kullanıcı Detay)
+- POST /api/users (Kullanıcı Oluştur)
+- PUT /api/users/{id} (Kullanıcı Güncelle)
+- DELETE /api/users/{id} (Kullanıcı Sil - Soft Delete)
+
+### Roles
+- GET /api/roles (Tüm Roller)
+- GET /api/roles/{id} (Rol Detay)
+- POST /api/roles (Rol Oluştur)
+- PUT /api/roles/{id} (Rol Güncelle)
+- DELETE /api/roles/{id} (Rol Sil)
+
+### Stores
+- GET /api/stores (Tüm Mağazalar)
+- GET /api/stores/{id} (Mağaza Detay)
+- GET /api/stores/city/{city} (Şehir Bazlı)
+- GET /api/stores/manager/{managerId} (Müdür Bazlı)
+- POST /api/stores (Mağaza Oluştur)
+- PUT /api/stores/{id} (Mağaza Güncelle)
+- DELETE /api/stores/{id} (Mağaza Sil)
+
+### Expenses
+- GET /api/expenses (Tüm Giderler)
+- GET /api/expenses/{id} (Gider Detay)
+- GET /api/expenses/store/{storeId} (Mağaza Giderleri)
+- GET /api/expenses/status/{status} (Durum Bazlı)
+- GET /api/expenses/pending (Bekleyen Giderler)
+- POST /api/expenses (Gider Oluştur)
+- PUT /api/expenses/{id} (Gider Güncelle)
+- POST /api/expenses/{id}/approve (Gider Onayla/Reddet)
+- DELETE /api/expenses/{id} (Gider Sil)
+- GET /api/expenses/total/store/{storeId} (Mağaza Toplam Gider)
+- GET /api/expenses/total/category/{category} (Kategori Toplam)
 
 ### Categories
 - GET /api/categories
@@ -235,24 +327,42 @@ dotnet ef database update
 
 ## Güvenlik
 
-- JWT Token Authentication
-- Role-Based Authorization
-- Input Validation
-- SQL Injection Prevention
-- XSS Protection
+- **JWT Token Authentication**: Stateless authentication
+- **Refresh Token Mechanism**: Güvenli token yenileme
+- **BCrypt Password Hashing**: Güvenli şifre saklama (BCrypt.Net-Next 4.0.3)
+- **Role-Based Authorization**: Rol bazlı erişim kontrolü
+- **Input Validation**: DTO seviyesinde veri doğrulama
+- **SQL Injection Prevention**: EF Core parametreli sorgular
+- **XSS Protection**: Input sanitization
+- **Soft Delete**: Veri kaybını önleme
+- **Audit Trail**: CreatedDate, UpdatedDate, CreatedBy, UpdatedBy tracking
 
 ## Test
 
 Proje kapsamlı test coverage'a sahiptir:
-- Unit Tests (28 test)
-- Integration Tests
-- Repository Tests
-- Service Tests
+- **Unit Tests**: 47 başarılı test
+  - User & Role Tests (15 test)
+  - Store Tests (8 test)
+  - Expense Tests (24 test)
+- **Entity Tests**: Tüm entity'lerin doğrulaması
+- **Repository Tests**: Repository metodlarının test edilmesi
+- **Service Tests**: Business logic testleri
 
+### Test Sonuçları
 ```bash
 cd tests/TeknoRoma.Tests
 dotnet test
+# Başarılı: 47 | Başarısız: 0 | Atlanan: 0
 ```
+
+### Test Coverage
+- ✓ Entity creation and validation
+- ✓ Default values verification
+- ✓ Relationships (One-to-Many, Many-to-Many)
+- ✓ Business rules validation
+- ✓ Approval workflows
+- ✓ Multi-currency calculations
+- ✓ Status transitions
 
 ## Katkıda Bulunanlar
 
