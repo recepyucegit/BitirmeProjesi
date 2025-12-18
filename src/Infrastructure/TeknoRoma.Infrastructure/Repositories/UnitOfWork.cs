@@ -20,6 +20,7 @@ public class UnitOfWork : IUnitOfWork
     public IRoleRepository Roles { get; }
     public IUserRoleRepository UserRoles { get; }
     public IStoreRepository Stores { get; }
+    public IExpenseRepository Expenses { get; }
 
     public UnitOfWork(ApplicationDbContext context)
     {
@@ -35,6 +36,7 @@ public class UnitOfWork : IUnitOfWork
         Roles = new RoleRepository(_context);
         UserRoles = new UserRoleRepository(_context);
         Stores = new StoreRepository(_context);
+        Expenses = new ExpenseRepository(_context);
     }
 
     public async Task<int> SaveChangesAsync()
