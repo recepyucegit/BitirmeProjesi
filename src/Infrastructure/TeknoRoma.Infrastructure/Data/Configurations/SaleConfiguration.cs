@@ -74,6 +74,7 @@ public class SaleConfiguration : IEntityTypeConfiguration<Sale>
         builder.HasIndex(s => s.SaleDate);
         builder.HasIndex(s => s.CustomerId);
         builder.HasIndex(s => s.EmployeeId);
+        builder.HasIndex(s => s.StoreId);
         builder.HasIndex(s => s.Status);
         builder.HasIndex(s => s.InvoiceNumber)
             .IsUnique();

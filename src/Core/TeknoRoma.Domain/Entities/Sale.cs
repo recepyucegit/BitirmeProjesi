@@ -5,6 +5,7 @@ public class Sale : BaseEntity
     public DateTime SaleDate { get; set; } = DateTime.Now;
     public int CustomerId { get; set; }
     public int EmployeeId { get; set; }
+    public int? StoreId { get; set; } // Store where sale was made
     public decimal TotalAmount { get; set; }
     public decimal DiscountAmount { get; set; } = 0;
     public decimal NetAmount { get; set; }
@@ -17,5 +18,6 @@ public class Sale : BaseEntity
     // Navigation Properties
     public virtual Customer? Customer { get; set; }
     public virtual Employee? Employee { get; set; }
+    public virtual Store? Store { get; set; }
     public virtual ICollection<SaleDetail>? SaleDetails { get; set; }
 }

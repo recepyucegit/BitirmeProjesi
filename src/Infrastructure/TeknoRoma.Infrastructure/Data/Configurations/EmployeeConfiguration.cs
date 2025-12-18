@@ -83,6 +83,7 @@ public class EmployeeConfiguration : IEntityTypeConfiguration<Employee>
         builder.HasIndex(e => e.Email);
         builder.HasIndex(e => e.Role);
         builder.HasIndex(e => e.IsActive);
+        builder.HasIndex(e => e.StoreId);
 
         // Query Filter - Soft Delete
         builder.HasQueryFilter(e => !e.IsDeleted);

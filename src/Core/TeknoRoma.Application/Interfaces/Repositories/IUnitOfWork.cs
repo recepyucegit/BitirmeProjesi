@@ -12,6 +12,7 @@ public interface IUnitOfWork : IDisposable
     IUserRepository Users { get; }
     IRoleRepository Roles { get; }
     IUserRoleRepository UserRoles { get; }
+    IStoreRepository Stores { get; }
 
     Task<int> SaveChangesAsync();
     Task BeginTransactionAsync();

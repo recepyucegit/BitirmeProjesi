@@ -18,8 +18,10 @@ public class Employee : BaseEntity
     public string Username { get; set; } = string.Empty;
     public string PasswordHash { get; set; } = string.Empty;
     public bool IsActive { get; set; } = true;
+    public int? StoreId { get; set; } // Store/Branch assignment
 
     // Navigation Properties
+    public virtual Store? Store { get; set; }
     // public virtual ICollection<Sale>? Sales { get; set; }
     // public virtual ICollection<Expense>? Expenses { get; set; }
 }
