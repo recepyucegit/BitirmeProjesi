@@ -1,3 +1,7 @@
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using TeknoRoma.Infrastructure.Data;
 using TeknoRoma.Infrastructure.Data.SeedData;
 using TeknoRoma.Infrastructure.Extensions;
@@ -10,6 +14,33 @@ builder.Services.AddControllers();
 // Infrastructure Services
 builder.Services.AddInfrastructureServices(builder.Configuration);
 
+// JWT Authentication
+var jwtKey = builder.Configuration["Jwt:Key"] ?? "TeknoRoma_Super_Secret_Key_Must_Be_At_Least_32_Characters_Long_12345";
+var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "TeknoRoma";
+var jwtAudience = builder.Configuration["Jwt:Audience"] ?? "TeknoRoma";
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtIssuer,
+        ValidAudience = jwtAudience,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
+        ClockSkew = TimeSpan.Zero
+    };
+});
+
+builder.Services.AddAuthorization();
+
 // CORS
 builder.Services.AddCors(options =>
 {
@@ -21,9 +52,43 @@ builder.Services.AddCors(options =>
     });
 });
 
-// Swagger/OpenAPI
+// Swagger/OpenAPI with JWT Support
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "TeknoRoma API",
+        Version = "v1",
+        Description = "TeknoRoma Elektronik Mağaza Yönetim Sistemi API"
+    });
+
+    // JWT Bearer token support in Swagger
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "JWT Authorization header using the Bearer scheme. Enter 'Bearer' [space] and then your token."
+    });
+
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
 
 var app = builder.Build();
 
@@ -60,6 +125,7 @@ app.UseHttpsRedirection();
 
 app.UseCors("AllowAll");
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
