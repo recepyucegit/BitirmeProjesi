@@ -9,6 +9,9 @@ public interface IUnitOfWork : IDisposable
     ICustomerRepository Customers { get; }
     ISaleRepository Sales { get; }
     ISupplierTransactionRepository SupplierTransactions { get; }
+    IUserRepository Users { get; }
+    IRoleRepository Roles { get; }
+    IUserRoleRepository UserRoles { get; }
 
     Task<int> SaveChangesAsync();
     Task BeginTransactionAsync();

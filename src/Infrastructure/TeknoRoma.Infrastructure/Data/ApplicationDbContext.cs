@@ -21,6 +21,9 @@ public class ApplicationDbContext : DbContext
     public DbSet<SaleDetail> SaleDetails { get; set; }
     public DbSet<SupplierTransaction> SupplierTransactions { get; set; }
     public DbSet<SupplierTransactionDetail> SupplierTransactionDetails { get; set; }
+    public DbSet<User> Users { get; set; }
+    public DbSet<Role> Roles { get; set; }
+    public DbSet<UserRole> UserRoles { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
