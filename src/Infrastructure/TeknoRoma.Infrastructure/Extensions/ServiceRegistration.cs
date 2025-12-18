@@ -44,6 +44,7 @@ public static class ServiceRegistration
         services.AddScoped<IUserRoleRepository, UserRoleRepository>();
         services.AddScoped<IStoreRepository, StoreRepository>();
         services.AddScoped<IExpenseRepository, ExpenseRepository>();
+        services.AddScoped<IDepartmentRepository, DepartmentRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         // Services
@@ -59,6 +60,7 @@ public static class ServiceRegistration
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IStoreService, StoreService>();
         services.AddScoped<IExpenseService, ExpenseService>();
+        services.AddScoped<IDepartmentService, DepartmentService>();
 
         return services;
     }

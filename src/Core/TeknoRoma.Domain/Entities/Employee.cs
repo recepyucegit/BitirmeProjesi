@@ -19,9 +19,11 @@ public class Employee : BaseEntity
     public string PasswordHash { get; set; } = string.Empty;
     public bool IsActive { get; set; } = true;
     public int? StoreId { get; set; } // Store/Branch assignment
+    public int? DepartmentId { get; set; } // Department assignment
 
     // Navigation Properties
     public virtual Store? Store { get; set; }
+    public virtual Department? Department { get; set; }
     // public virtual ICollection<Sale>? Sales { get; set; }
     // public virtual ICollection<Expense>? Expenses { get; set; }
 }
