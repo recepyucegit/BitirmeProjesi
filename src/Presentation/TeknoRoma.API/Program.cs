@@ -1,7 +1,11 @@
 using System.Text;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using TeknoRoma.API.Middleware;
+using TeknoRoma.Application.Validators;
 using TeknoRoma.Infrastructure.Data;
 using TeknoRoma.Infrastructure.Data.SeedData;
 using TeknoRoma.Infrastructure.Extensions;
@@ -10,6 +14,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container
 builder.Services.AddControllers();
+
+// FluentValidation
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddFluentValidationClientsideAdapters();
+builder.Services.AddValidatorsFromAssemblyContaining<CreateUserDtoValidator>();
 
 // Infrastructure Services
 builder.Services.AddInfrastructureServices(builder.Configuration);
@@ -120,6 +129,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+// Global Exception Handler Middleware
+app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 
 app.UseHttpsRedirection();
 
