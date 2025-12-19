@@ -45,6 +45,7 @@ public static class ServiceRegistration
         services.AddScoped<IStoreRepository, StoreRepository>();
         services.AddScoped<IExpenseRepository, ExpenseRepository>();
         services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+        services.AddScoped<IReportRepository, ReportRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         // Services
@@ -61,6 +62,7 @@ public static class ServiceRegistration
         services.AddScoped<IStoreService, StoreService>();
         services.AddScoped<IExpenseService, ExpenseService>();
         services.AddScoped<IDepartmentService, DepartmentService>();
+        services.AddScoped<IReportService, ReportService>();
 
         return services;
     }
