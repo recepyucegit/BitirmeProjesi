@@ -7,7 +7,6 @@ using Microsoft.OpenApi.Models;
 using TeknoRoma.API.Middleware;
 using TeknoRoma.Application.Validators;
 using TeknoRoma.Infrastructure.Data;
-using TeknoRoma.Infrastructure.Data.SeedData;
 using TeknoRoma.Infrastructure.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -113,13 +112,14 @@ using (var scope = app.Services.CreateScope())
         await context.Database.EnsureCreatedAsync();
 
         // Seed data
-        await DataSeeder.SeedAllAsync(context);
+        var seeder = new DatabaseSeeder(context);
+        await seeder.SeedAsync();
 
-        Console.WriteLine("Database initialized and seeded successfully!");
+        Console.WriteLine("✅ Database initialized and seeded successfully!");
     }
     catch (Exception ex)
     {
-        Console.WriteLine($"An error occurred while seeding the database: {ex.Message}");
+        Console.WriteLine($"❌ An error occurred while seeding the database: {ex.Message}");
     }
 }
 
