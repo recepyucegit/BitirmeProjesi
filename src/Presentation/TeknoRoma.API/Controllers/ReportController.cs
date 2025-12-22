@@ -15,10 +15,12 @@ namespace TeknoRoma.API.Controllers;
 public class ReportController : ControllerBase
 {
     private readonly IReportService _reportService;
+    private readonly IReportExportService _exportService;
 
-    public ReportController(IReportService reportService)
+    public ReportController(IReportService reportService, IReportExportService exportService)
     {
         _reportService = reportService;
+        _exportService = exportService;
     }
 
     /// <summary>
@@ -159,6 +161,61 @@ public class ReportController : ControllerBase
     {
         var stats = await _reportService.GetDashboardStatsAsync();
         return Ok(stats);
+    }
+
+    /// <summary>
+    /// Export sales report to Excel file
+    /// </summary>
+    [HttpPost("sales/export")]
+    public async Task<IActionResult> ExportSalesReport(
+        [FromQuery] DateTime? startDate,
+        [FromQuery] DateTime? endDate,
+        [FromQuery] int? categoryId,
+        [FromQuery] int? storeId)
+    {
+        var excelData = await _exportService.ExportSalesReportAsync(startDate, endDate, categoryId, storeId);
+        var fileName = $"SalesReport_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx";
+
+        return File(excelData,
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            fileName);
+    }
+
+    /// <summary>
+    /// Export stock report to Excel file
+    /// </summary>
+    [HttpPost("stock/export")]
+    public async Task<IActionResult> ExportStockReport(
+        [FromQuery] int? categoryId,
+        [FromQuery] bool? lowStockOnly)
+    {
+        var excelData = await _exportService.ExportStockReportAsync(categoryId, lowStockOnly);
+        var fileName = $"StockReport_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx";
+
+        return File(excelData,
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            fileName);
+    }
+
+    /// <summary>
+    /// Export expense report to Excel file
+    /// </summary>
+    [HttpPost("expenses/export")]
+    public async Task<IActionResult> ExportExpenseReport(
+        [FromQuery] DateTime? startDate,
+        [FromQuery] DateTime? endDate,
+        [FromQuery] int? storeId,
+        [FromQuery] int? departmentId,
+        [FromQuery] string? category,
+        [FromQuery] string? status)
+    {
+        var excelData = await _exportService.ExportExpenseReportAsync(
+            startDate, endDate, storeId, departmentId, category, status);
+        var fileName = $"ExpenseReport_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx";
+
+        return File(excelData,
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            fileName);
     }
 
 }
