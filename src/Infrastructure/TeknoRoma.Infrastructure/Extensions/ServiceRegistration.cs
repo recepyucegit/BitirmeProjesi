@@ -63,6 +63,7 @@ public static class ServiceRegistration
         services.AddScoped<IExpenseService, ExpenseService>();
         services.AddScoped<IDepartmentService, DepartmentService>();
         services.AddScoped<IReportService, ReportService>();
+        services.AddScoped<IReportExportService, ReportExportService>();
 
         return services;
     }
