@@ -1,4 +1,5 @@
 using Bogus;
+using Microsoft.EntityFrameworkCore;
 using TeknoRoma.Domain.Entities;
 
 namespace TeknoRoma.Infrastructure.Data;
@@ -15,7 +16,7 @@ public class DatabaseSeeder
     public async Task SeedAsync()
     {
         // Zaten veri varsa seed yapma
-        if (_context.Categories.Any())
+        if (_context.Users.Any())
         {
             return;
         }
@@ -100,10 +101,10 @@ public class DatabaseSeeder
         // 5. Departmanlar
         var departments = new List<Department>
         {
-            new() { DepartmentName = "Satış", Description = "Satış departmanı", IsActive = true },
-            new() { DepartmentName = "Muhasebe", Description = "Muhasebe departmanı", IsActive = true },
-            new() { DepartmentName = "IT", Description = "Bilgi teknolojileri", IsActive = true },
-            new() { DepartmentName = "İnsan Kaynakları", Description = "İK departmanı", IsActive = true }
+            new() { DepartmentName = "Satış", DepartmentCode = "SALES", Description = "Satış departmanı", IsActive = true },
+            new() { DepartmentName = "Muhasebe", DepartmentCode = "ACC", Description = "Muhasebe departmanı", IsActive = true },
+            new() { DepartmentName = "IT", DepartmentCode = "IT", Description = "Bilgi teknolojileri", IsActive = true },
+            new() { DepartmentName = "İnsan Kaynakları", DepartmentCode = "HR", Description = "İK departmanı", IsActive = true }
         };
         await _context.Departments.AddRangeAsync(departments);
         await _context.SaveChangesAsync();
@@ -125,18 +126,7 @@ public class DatabaseSeeder
         await _context.Customers.AddRangeAsync(customers);
         await _context.SaveChangesAsync();
 
-        // 7. Roller
-        var roles = new List<Role>
-        {
-            new() { Name = "Admin", Description = "Sistem yöneticisi" },
-            new() { Name = "Manager", Description = "Mağaza müdürü" },
-            new() { Name = "Sales", Description = "Satış elemanı" },
-            new() { Name = "Accountant", Description = "Muhasebeci" }
-        };
-        await _context.Roles.AddRangeAsync(roles);
-        await _context.SaveChangesAsync();
-
-        // 8. Admin Kullanıcı
+        // 7. Admin Kullanıcı (Roller migration'da oluşturuluyor)
         var adminUser = new User
         {
             Username = "admin",
@@ -147,11 +137,12 @@ public class DatabaseSeeder
         await _context.Users.AddAsync(adminUser);
         await _context.SaveChangesAsync();
 
-        // Admin role assignment
+        // Admin role assignment (Admin rolü migration'da oluşturuldu)
+        var adminRole = await _context.Roles.FirstAsync(r => r.Name == "Admin");
         var adminUserRole = new UserRole
         {
             UserId = adminUser.Id,
-            RoleId = roles.First(r => r.Name == "Admin").Id
+            RoleId = adminRole.Id
         };
         await _context.UserRoles.AddAsync(adminUserRole);
         await _context.SaveChangesAsync();
@@ -170,6 +161,8 @@ public class DatabaseSeeder
             .RuleFor(e => e.SalesQuota, f => f.Random.Decimal(50000, 200000))
             .RuleFor(e => e.CommissionRate, f => f.Random.Decimal(0.05m, 0.15m))
             .RuleFor(e => e.Role, f => f.PickRandom(new[] { "Satış Danışmanı", "Mağaza Müdürü", "Kasa Görevlisi" }))
+            .RuleFor(e => e.Username, (f, e) => f.Internet.UserName(e.FirstName, e.LastName))
+            .RuleFor(e => e.PasswordHash, f => BCrypt.Net.BCrypt.HashPassword("Password123!"))
             .RuleFor(e => e.IsActive, f => true);
 
         var employees = employeeFaker.Generate(15);
@@ -184,7 +177,6 @@ public class DatabaseSeeder
         Console.WriteLine($"   - {departments.Count} Departman");
         Console.WriteLine($"   - {customers.Count} Müşteri");
         Console.WriteLine($"   - {employees.Count} Çalışan");
-        Console.WriteLine($"   - {roles.Count} Rol");
         Console.WriteLine($"   - 1 Admin Kullanıcı (username: admin, password: Admin123!)");
     }
 }

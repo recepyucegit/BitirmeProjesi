@@ -2,6 +2,7 @@ using System.Text;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using TeknoRoma.API.Middleware;
@@ -108,8 +109,8 @@ using (var scope = app.Services.CreateScope())
     {
         var context = services.GetRequiredService<ApplicationDbContext>();
 
-        // Create database if not exists
-        await context.Database.EnsureCreatedAsync();
+        // Apply migrations
+        await context.Database.MigrateAsync();
 
         // Seed data
         var seeder = new DatabaseSeeder(context);
