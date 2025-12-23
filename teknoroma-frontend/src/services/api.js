@@ -71,6 +71,75 @@ export const productAPI = {
   barcodeExists: (barcode) => api.get(`/product/barcode/${barcode}/exists`),
 };
 
+// Supplier API endpoints
+export const supplierAPI = {
+  // Tüm tedarikçileri getir
+  getAll: () => api.get('/supplier'),
+
+  // Aktif tedarikçileri getir
+  getActive: () => api.get('/supplier/active'),
+
+  // ID'ye göre tedarikçi getir
+  getById: (id) => api.get(`/supplier/${id}`),
+
+  // Vergi numarasına göre tedarikçi getir
+  getByTaxNumber: (taxNumber) => api.get(`/supplier/tax/${taxNumber}`),
+
+  // Yeni tedarikçi oluştur
+  create: (data) => api.post('/supplier', data),
+
+  // Tedarikçi güncelle
+  update: (id, data) => api.put(`/supplier/${id}`, data),
+
+  // Tedarikçi sil
+  delete: (id) => api.delete(`/supplier/${id}`),
+
+  // Tedarikçi var mı kontrol et
+  exists: (id) => api.get(`/supplier/${id}/exists`),
+
+  // Vergi numarası var mı kontrol et
+  taxNumberExists: (taxNumber) => api.get(`/supplier/tax/${taxNumber}/exists`),
+};
+
+// Employee API endpoints
+export const employeeAPI = {
+  // Tüm çalışanları getir
+  getAll: () => api.get('/employee'),
+
+  // Aktif çalışanları getir
+  getActive: () => api.get('/employee/active'),
+
+  // Role göre çalışanları getir
+  getByRole: (role) => api.get(`/employee/role/${role}`),
+
+  // ID'ye göre çalışan getir
+  getById: (id) => api.get(`/employee/${id}`),
+
+  // Kullanıcı adına göre çalışan getir
+  getByUsername: (username) => api.get(`/employee/username/${username}`),
+
+  // TC kimlik numarasına göre çalışan getir
+  getByIdentityNumber: (identityNumber) => api.get(`/employee/identity/${identityNumber}`),
+
+  // Yeni çalışan oluştur
+  create: (data) => api.post('/employee', data),
+
+  // Çalışan güncelle
+  update: (id, data) => api.put(`/employee/${id}`, data),
+
+  // Çalışan sil
+  delete: (id) => api.delete(`/employee/${id}`),
+
+  // Çalışan var mı kontrol et
+  exists: (id) => api.get(`/employee/${id}/exists`),
+
+  // Kullanıcı adı var mı kontrol et
+  usernameExists: (username) => api.get(`/employee/username/${username}/exists`),
+
+  // TC kimlik numarası var mı kontrol et
+  identityNumberExists: (identityNumber) => api.get(`/employee/identity/${identityNumber}/exists`),
+};
+
 // Auth API endpoints
 export const authAPI = {
   // Login

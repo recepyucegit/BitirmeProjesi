@@ -34,6 +34,18 @@ const Navbar = () => {
         >
           Ürünler
         </Link>
+        <Link
+          to="/suppliers"
+          className={location.pathname === '/suppliers' ? 'active' : ''}
+        >
+          Tedarikçiler
+        </Link>
+        <Link
+          to="/employees"
+          className={location.pathname === '/employees' ? 'active' : ''}
+        >
+          Çalışanlar
+        </Link>
       </nav>
       <div className="navbar-user">
         <span className="user-info">
