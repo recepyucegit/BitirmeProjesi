@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { employeeAPI } from '../services/api';
+import Modal from '../components/Modal';
+import EmployeeForm from '../components/EmployeeForm';
 
 function EmployeeList() {
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
 
   useEffect(() => {
     fetchEmployees();
@@ -20,6 +24,34 @@ function EmployeeList() {
       setError('Çalışanlar yüklenirken bir hata oluştu: ' + err.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleAdd = () => {
+    setSelectedEmployee(null);
+    setIsModalOpen(true);
+  };
+
+  const handleEdit = (employee) => {
+    setSelectedEmployee(employee);
+    setIsModalOpen(true);
+  };
+
+  const handleSubmit = async (formData) => {
+    try {
+      if (selectedEmployee) {
+        // Update existing employee
+        const response = await employeeAPI.update(selectedEmployee.id, { ...formData, id: selectedEmployee.id });
+        setEmployees(employees.map(e => e.id === selectedEmployee.id ? response.data : e));
+      } else {
+        // Create new employee
+        const response = await employeeAPI.create(formData);
+        setEmployees([...employees, response.data]);
+      }
+      setIsModalOpen(false);
+      setSelectedEmployee(null);
+    } catch (err) {
+      alert('İşlem sırasında bir hata oluştu: ' + err.message);
     }
   };
 
@@ -55,7 +87,9 @@ function EmployeeList() {
       <h2>Çalışan Listesi</h2>
 
       <div style={{ marginBottom: '20px' }}>
-        <button className="btn btn-primary">Yeni Çalışan Ekle</button>
+        <button className="btn btn-primary" onClick={handleAdd}>
+          Yeni Çalışan Ekle
+        </button>
       </div>
 
       <table>
@@ -90,7 +124,11 @@ function EmployeeList() {
                 </span>
               </td>
               <td>
-                <button className="btn btn-sm btn-info" style={{ marginRight: '5px' }}>
+                <button
+                  className="btn btn-sm btn-info"
+                  style={{ marginRight: '5px' }}
+                  onClick={() => handleEdit(employee)}
+                >
                   Düzenle
                 </button>
                 <button
@@ -110,6 +148,18 @@ function EmployeeList() {
           Henüz çalışan bulunmamaktadır.
         </p>
       )}
+
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title={selectedEmployee ? 'Çalışan Düzenle' : 'Yeni Çalışan Ekle'}
+      >
+        <EmployeeForm
+          employee={selectedEmployee}
+          onSubmit={handleSubmit}
+          onCancel={() => setIsModalOpen(false)}
+        />
+      </Modal>
     </div>
   );
 }

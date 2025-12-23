@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { supplierAPI } from '../services/api';
+import Modal from '../components/Modal';
+import SupplierForm from '../components/SupplierForm';
 
 function SupplierList() {
   const [suppliers, setSuppliers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedSupplier, setSelectedSupplier] = useState(null);
 
   useEffect(() => {
     fetchSuppliers();
@@ -20,6 +24,34 @@ function SupplierList() {
       setError('Tedarikçiler yüklenirken bir hata oluştu: ' + err.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleAdd = () => {
+    setSelectedSupplier(null);
+    setIsModalOpen(true);
+  };
+
+  const handleEdit = (supplier) => {
+    setSelectedSupplier(supplier);
+    setIsModalOpen(true);
+  };
+
+  const handleSubmit = async (formData) => {
+    try {
+      if (selectedSupplier) {
+        // Update existing supplier
+        const response = await supplierAPI.update(selectedSupplier.id, { ...formData, id: selectedSupplier.id });
+        setSuppliers(suppliers.map(s => s.id === selectedSupplier.id ? response.data : s));
+      } else {
+        // Create new supplier
+        const response = await supplierAPI.create(formData);
+        setSuppliers([...suppliers, response.data]);
+      }
+      setIsModalOpen(false);
+      setSelectedSupplier(null);
+    } catch (err) {
+      alert('İşlem sırasında bir hata oluştu: ' + err.message);
     }
   };
 
@@ -44,7 +76,9 @@ function SupplierList() {
       <h2>Tedarikçi Listesi</h2>
 
       <div style={{ marginBottom: '20px' }}>
-        <button className="btn btn-primary">Yeni Tedarikçi Ekle</button>
+        <button className="btn btn-primary" onClick={handleAdd}>
+          Yeni Tedarikçi Ekle
+        </button>
       </div>
 
       <table>
@@ -79,7 +113,11 @@ function SupplierList() {
                 </span>
               </td>
               <td>
-                <button className="btn btn-sm btn-info" style={{ marginRight: '5px' }}>
+                <button
+                  className="btn btn-sm btn-info"
+                  style={{ marginRight: '5px' }}
+                  onClick={() => handleEdit(supplier)}
+                >
                   Düzenle
                 </button>
                 <button
@@ -99,6 +137,18 @@ function SupplierList() {
           Henüz tedarikçi bulunmamaktadır.
         </p>
       )}
+
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title={selectedSupplier ? 'Tedarikçi Düzenle' : 'Yeni Tedarikçi Ekle'}
+      >
+        <SupplierForm
+          supplier={selectedSupplier}
+          onSubmit={handleSubmit}
+          onCancel={() => setIsModalOpen(false)}
+        />
+      </Modal>
     </div>
   );
 }
