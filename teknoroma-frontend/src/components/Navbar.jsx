@@ -1,8 +1,16 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 const Navbar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
   return (
     <div className="navbar">
@@ -27,6 +35,14 @@ const Navbar = () => {
           Ürünler
         </Link>
       </nav>
+      <div className="navbar-user">
+        <span className="user-info">
+          {user?.username || 'Kullanıcı'}
+        </span>
+        <button onClick={handleLogout} className="logout-button">
+          Çıkış Yap
+        </button>
+      </div>
     </div>
   );
 };

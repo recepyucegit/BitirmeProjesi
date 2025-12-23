@@ -71,4 +71,22 @@ export const productAPI = {
   barcodeExists: (barcode) => api.get(`/product/barcode/${barcode}/exists`),
 };
 
+// Auth API endpoints
+export const authAPI = {
+  // Login
+  login: (username, password) => api.post('/auth/login', { username, password }),
+
+  // Register (if needed in future)
+  register: (data) => api.post('/auth/register', data),
+};
+
+// Token yönetimi için interceptor
+export const setAuthToken = (token) => {
+  if (token) {
+    api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+  } else {
+    delete api.defaults.headers.common['Authorization'];
+  }
+};
+
 export default api;
