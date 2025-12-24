@@ -9,6 +9,7 @@ import ProductList from './pages/ProductList';
 import CustomerList from './pages/CustomerList';
 import SupplierList from './pages/SupplierList';
 import EmployeeList from './pages/EmployeeList';
+import SaleList from './pages/SaleList';
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
                       <Route path="/customers" element={<CustomerList />} />
                       <Route path="/suppliers" element={<SupplierList />} />
                       <Route path="/employees" element={<EmployeeList />} />
+                      <Route path="/sales" element={<SaleList />} />
                       {/* Redirect unknown routes to home */}
                       <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>

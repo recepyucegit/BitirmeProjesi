@@ -192,4 +192,41 @@ export const employeeAPI = {
   exists: (id) => api.get(`/employee/${id}/exists`),
 };
 
+// Sale API endpoints
+export const saleAPI = {
+  // Tüm satışları getir
+  getAll: () => api.get('/sale'),
+
+  // ID'ye göre satış getir
+  getById: (id) => api.get(`/sale/${id}`),
+
+  // Müşteriye göre satışları getir
+  getByCustomerId: (customerId) => api.get(`/sale/customer/${customerId}`),
+
+  // Çalışana göre satışları getir
+  getByEmployeeId: (employeeId) => api.get(`/sale/employee/${employeeId}`),
+
+  // Tarih aralığına göre satışları getir
+  getByDateRange: (startDate, endDate) => api.get('/sale/daterange', {
+    params: { startDate, endDate }
+  }),
+
+  // Duruma göre satışları getir
+  getByStatus: (status) => api.get(`/sale/status/${status}`),
+
+  // Çalışan satış toplamlarını getir
+  getEmployeeTotals: (employeeId, startDate, endDate) => api.get(`/sale/employee/${employeeId}/totals`, {
+    params: { startDate, endDate }
+  }),
+
+  // Yeni satış oluştur
+  create: (data) => api.post('/sale', data),
+
+  // Satış güncelle
+  update: (id, data) => api.put(`/sale/${id}`, data),
+
+  // Satış sil
+  delete: (id) => api.delete(`/sale/${id}`),
+};
+
 export default api;

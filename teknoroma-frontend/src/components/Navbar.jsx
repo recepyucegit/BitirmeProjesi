@@ -51,6 +51,12 @@ const Navbar = () => {
         >
           Çalışanlar
         </Link>
+        <Link
+          to="/sales"
+          className={location.pathname === '/sales' ? 'active' : ''}
+        >
+          Satışlar
+        </Link>
       </nav>
       <div className="navbar-user">
         {user && <span className="user-name">{user.username || 'Kullanıcı'}</span>}
