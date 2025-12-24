@@ -11,6 +11,46 @@ const api = axios.create({
   },
 });
 
+// Request interceptor - Token'ı her istekte ekle
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// Response interceptor - Hata yönetimi
+api.interceptors.response.use(
+  (response) => response.data,
+  (error) => {
+    if (error.response?.status === 401) {
+      // Token geçersiz veya yok - Logout yap
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
+
+// Auth API endpoints
+export const authAPI = {
+  // Kullanıcı girişi
+  login: (data) => api.post('/auth/login', data),
+
+  // Token yenileme
+  refreshToken: (refreshToken) => api.post('/auth/refresh-token', { refreshToken }),
+
+  // Kullanıcı kaydı (admin için)
+  register: (data) => api.post('/auth/register', data),
+};
+
 // Category API endpoints
 export const categoryAPI = {
   // Tüm kategorileri getir
@@ -69,6 +109,87 @@ export const productAPI = {
 
   // Barkod var mı kontrol et
   barcodeExists: (barcode) => api.get(`/product/barcode/${barcode}/exists`),
+};
+
+// Customer API endpoints
+export const customerAPI = {
+  // Tüm müşterileri getir
+  getAll: () => api.get('/customer'),
+
+  // Aktif müşterileri getir
+  getActive: () => api.get('/customer/active'),
+
+  // Müşteri tipine göre getir (Individual veya Corporate)
+  getByType: (type) => api.get(`/customer/type/${type}`),
+
+  // ID'ye göre müşteri getir
+  getById: (id) => api.get(`/customer/${id}`),
+
+  // TC Kimlik numarasına göre müşteri getir
+  getByIdentityNumber: (identityNumber) => api.get(`/customer/identity/${identityNumber}`),
+
+  // Yeni müşteri oluştur
+  create: (data) => api.post('/customer', data),
+
+  // Müşteri güncelle
+  update: (id, data) => api.put(`/customer/${id}`, data),
+
+  // Müşteri sil
+  delete: (id) => api.delete(`/customer/${id}`),
+
+  // Müşteri var mı kontrol et
+  exists: (id) => api.get(`/customer/${id}/exists`),
+
+  // TC Kimlik numarası var mı kontrol et
+  identityNumberExists: (identityNumber) => api.get(`/customer/identity/${identityNumber}/exists`),
+};
+
+// Supplier API endpoints
+export const supplierAPI = {
+  // Tüm tedarikçileri getir
+  getAll: () => api.get('/supplier'),
+
+  // Aktif tedarikçileri getir
+  getActive: () => api.get('/supplier/active'),
+
+  // ID'ye göre tedarikçi getir
+  getById: (id) => api.get(`/supplier/${id}`),
+
+  // Yeni tedarikçi oluştur
+  create: (data) => api.post('/supplier', data),
+
+  // Tedarikçi güncelle
+  update: (id, data) => api.put(`/supplier/${id}`, data),
+
+  // Tedarikçi sil
+  delete: (id) => api.delete(`/supplier/${id}`),
+
+  // Tedarikçi var mı kontrol et
+  exists: (id) => api.get(`/supplier/${id}/exists`),
+};
+
+// Employee API endpoints
+export const employeeAPI = {
+  // Tüm çalışanları getir
+  getAll: () => api.get('/employee'),
+
+  // Aktif çalışanları getir
+  getActive: () => api.get('/employee/active'),
+
+  // ID'ye göre çalışan getir
+  getById: (id) => api.get(`/employee/${id}`),
+
+  // Yeni çalışan oluştur
+  create: (data) => api.post('/employee', data),
+
+  // Çalışan güncelle
+  update: (id, data) => api.put(`/employee/${id}`, data),
+
+  // Çalışan sil
+  delete: (id) => api.delete(`/employee/${id}`),
+
+  // Çalışan var mı kontrol et
+  exists: (id) => api.get(`/employee/${id}/exists`),
 };
 
 export default api;

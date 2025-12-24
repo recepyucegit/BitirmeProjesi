@@ -1,8 +1,15 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const Navbar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
   return (
     <div className="navbar">
@@ -26,7 +33,25 @@ const Navbar = () => {
         >
           Ürünler
         </Link>
+        <Link
+          to="/customers"
+          className={location.pathname === '/customers' ? 'active' : ''}
+        >
+          Müşteriler
+        </Link>
+        <Link
+          to="/suppliers"
+          className={location.pathname === '/suppliers' ? 'active' : ''}
+        >
+          Tedarikçiler
+        </Link>
       </nav>
+      <div className="navbar-user">
+        {user && <span className="user-name">{user.username || 'Kullanıcı'}</span>}
+        <button onClick={handleLogout} className="logout-button">
+          Çıkış Yap
+        </button>
+      </div>
     </div>
   );
 };
