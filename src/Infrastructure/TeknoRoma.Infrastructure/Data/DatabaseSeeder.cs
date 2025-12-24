@@ -176,6 +176,69 @@ public class DatabaseSeeder
         await _context.Employees.AddRangeAsync(employees);
         await _context.SaveChangesAsync();
 
+        // 10. Satışlar
+        var salesFaker = new Faker();
+        var sales = new List<Sale>();
+
+        for (int i = 0; i < 30; i++)
+        {
+            var customer = salesFaker.PickRandom(customers);
+            var employee = salesFaker.PickRandom(employees);
+            var store = salesFaker.PickRandom(stores);
+            var saleDate = salesFaker.Date.Between(DateTime.Now.AddMonths(-3), DateTime.Now);
+
+            var sale = new Sale
+            {
+                SaleDate = saleDate,
+                CustomerId = customer.Id,
+                EmployeeId = employee.Id,
+                StoreId = store.Id,
+                PaymentMethod = salesFaker.PickRandom(new[] { "Cash", "CreditCard", "BankTransfer" }),
+                Status = salesFaker.PickRandom(new[] { "Completed", "Completed", "Completed", "Cancelled" }), // 75% tamamlanmış
+                InvoiceNumber = $"INV-{DateTime.Now.Year}-{(i + 1):D5}",
+                Notes = salesFaker.Random.Bool(0.3f) ? salesFaker.Lorem.Sentence() : null
+            };
+
+            // Her satış için 1-5 arası ürün ekle
+            var saleDetails = new List<SaleDetail>();
+            var numberOfProducts = salesFaker.Random.Number(1, 5);
+            var selectedProducts = salesFaker.PickRandom(products, numberOfProducts).ToList();
+
+            foreach (var product in selectedProducts)
+            {
+                var quantity = salesFaker.Random.Number(1, 3);
+                var unitPrice = product.Price;
+                var discountRate = salesFaker.Random.Decimal(0, 20); // %0-20 indirim
+                var discountAmount = (unitPrice * quantity * discountRate) / 100;
+                var totalPrice = unitPrice * quantity;
+                var netPrice = totalPrice - discountAmount;
+
+                var saleDetail = new SaleDetail
+                {
+                    ProductId = product.Id,
+                    Quantity = quantity,
+                    UnitPrice = unitPrice,
+                    DiscountRate = discountRate,
+                    DiscountAmount = discountAmount,
+                    TotalPrice = totalPrice,
+                    NetPrice = netPrice
+                };
+                saleDetails.Add(saleDetail);
+            }
+
+            // Sale totals hesapla
+            sale.TotalAmount = saleDetails.Sum(sd => sd.TotalPrice);
+            sale.DiscountAmount = salesFaker.Random.Decimal(0, 500); // Ekstra indirim
+            sale.NetAmount = sale.TotalAmount - sale.DiscountAmount - saleDetails.Sum(sd => sd.DiscountAmount);
+            sale.CommissionAmount = sale.NetAmount * 0.10m; // %10 komisyon
+
+            sale.SaleDetails = saleDetails;
+            sales.Add(sale);
+        }
+
+        await _context.Sales.AddRangeAsync(sales);
+        await _context.SaveChangesAsync();
+
         Console.WriteLine("✅ Seed data başarıyla oluşturuldu!");
         Console.WriteLine($"   - {categories.Count} Kategori");
         Console.WriteLine($"   - {suppliers.Count} Tedarikçi");
@@ -186,5 +249,6 @@ public class DatabaseSeeder
         Console.WriteLine($"   - {employees.Count} Çalışan");
         Console.WriteLine($"   - {roles.Count} Rol");
         Console.WriteLine($"   - 1 Admin Kullanıcı (username: admin, password: Admin123!)");
+        Console.WriteLine($"   - {sales.Count} Satış ({sales.Sum(s => s.SaleDetails?.Count ?? 0)} ürün satışı)");
     }
 }
