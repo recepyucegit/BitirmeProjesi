@@ -130,7 +130,7 @@ const SaleForm = ({ sale, onSubmit, onCancel, loading }) => {
         productId: product.id,
         productName: product.name,
         quantity: qty,
-        unitPrice: product.sellingPriceTL,
+        unitPrice: product.price,
         discountRate: disc,
         discountAmount: 0,
         totalPrice: 0,
