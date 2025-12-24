@@ -8,6 +8,7 @@ import CategoryList from './pages/CategoryList';
 import ProductList from './pages/ProductList';
 import CustomerList from './pages/CustomerList';
 import SupplierList from './pages/SupplierList';
+import EmployeeList from './pages/EmployeeList';
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
                       <Route path="/products" element={<ProductList />} />
                       <Route path="/customers" element={<CustomerList />} />
                       <Route path="/suppliers" element={<SupplierList />} />
+                      <Route path="/employees" element={<EmployeeList />} />
                       {/* Redirect unknown routes to home */}
                       <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>
