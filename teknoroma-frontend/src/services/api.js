@@ -229,4 +229,79 @@ export const saleAPI = {
   delete: (id) => api.delete(`/sale/${id}`),
 };
 
+// Store API endpoints
+export const storeAPI = {
+  // Tüm mağazaları getir
+  getAll: () => api.get('/store'),
+
+  // Aktif mağazaları getir
+  getActive: () => api.get('/store/active'),
+
+  // Şehre göre mağazaları getir
+  getByCity: (city) => api.get(`/store/city/${city}`),
+
+  // ID'ye göre mağaza getir
+  getById: (id) => api.get(`/store/${id}`),
+
+  // Mağaza koduna göre mağaza getir
+  getByStoreCode: (storeCode) => api.get(`/store/code/${storeCode}`),
+
+  // Yeni mağaza oluştur
+  create: (data) => api.post('/store', data),
+
+  // Mağaza güncelle
+  update: (id, data) => api.put(`/store/${id}`, data),
+
+  // Mağaza sil
+  delete: (id) => api.delete(`/store/${id}`),
+
+  // Mağaza kodu var mı kontrol et
+  storeCodeExists: (storeCode) => api.get(`/store/code/${storeCode}/exists`),
+};
+
+// Expense API endpoints
+export const expenseAPI = {
+  // Tüm giderleri getir
+  getAll: () => api.get('/expense'),
+
+  // Onay bekleyenleri getir
+  getPending: () => api.get('/expense/pending'),
+
+  // Duruma göre giderleri getir
+  getByStatus: (status) => api.get(`/expense/status/${status}`),
+
+  // Mağazaya göre giderleri getir
+  getByStoreId: (storeId) => api.get(`/expense/store/${storeId}`),
+
+  // Tarih aralığına göre giderleri getir
+  getByDateRange: (startDate, endDate) => api.get('/expense/date-range', {
+    params: { startDate, endDate }
+  }),
+
+  // Mağazanın toplam giderini getir
+  getTotalByStore: (storeId, startDate, endDate) => api.get(`/expense/store/${storeId}/total`, {
+    params: { startDate, endDate }
+  }),
+
+  // Kategoriye göre toplam gider
+  getTotalByCategory: (category, startDate, endDate) => api.get(`/expense/category/${category}/total`, {
+    params: { startDate, endDate }
+  }),
+
+  // ID'ye göre gider getir
+  getById: (id) => api.get(`/expense/${id}`),
+
+  // Yeni gider oluştur
+  create: (data) => api.post('/expense', data),
+
+  // Gider güncelle
+  update: (id, data) => api.put(`/expense/${id}`, data),
+
+  // Gideri onayla veya reddet
+  approve: (id, data) => api.post(`/expense/${id}/approve`, data),
+
+  // Gider sil
+  delete: (id) => api.delete(`/expense/${id}`),
+};
+
 export default api;

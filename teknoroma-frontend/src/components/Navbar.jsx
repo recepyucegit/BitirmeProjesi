@@ -57,6 +57,18 @@ const Navbar = () => {
         >
           Satışlar
         </Link>
+        <Link
+          to="/stores"
+          className={location.pathname === '/stores' ? 'active' : ''}
+        >
+          Mağazalar
+        </Link>
+        <Link
+          to="/expenses"
+          className={location.pathname === '/expenses' ? 'active' : ''}
+        >
+          Giderler
+        </Link>
       </nav>
       <div className="navbar-user">
         {user && <span className="user-name">{user.username || 'Kullanıcı'}</span>}

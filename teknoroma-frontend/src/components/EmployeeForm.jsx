@@ -161,7 +161,7 @@ const EmployeeForm = ({ employee, onSubmit, onCancel, loading }) => {
         lastName: formData.lastName.trim(),
         identityNumber: formData.identityNumber.trim(),
         email: formData.email.trim(),
-        phone: formData.phone.trim() || null,
+        phone: formData.phone.trim().replace(/[\s\-\(\)]/g, '') || null, // Boşluk, tire, parantez temizle
         address: formData.address.trim() || null,
         city: formData.city.trim() || null,
         hireDate: formData.hireDate,
@@ -242,13 +242,14 @@ const EmployeeForm = ({ employee, onSubmit, onCancel, loading }) => {
         <div className="form-group">
           <label htmlFor="phone">Telefon</label>
           <input
-            type="tel"
+            type="text"
             id="phone"
             name="phone"
             value={formData.phone}
             onChange={handleChange}
             placeholder="0555 123 45 67"
-            pattern="[0-9]*"
+            pattern="[0-9\-\s\(\)]+"
+            title="Sadece rakam, tire, boşluk ve parantez kullanabilirsiniz"
             inputMode="numeric"
             disabled={loading}
           />
