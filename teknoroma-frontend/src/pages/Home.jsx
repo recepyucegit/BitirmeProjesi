@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { reportAPI } from '../services/api';
+import './Home.css';
 
 export default function Home() {
   const [stats, setStats] = useState(null);
@@ -62,10 +63,18 @@ export default function Home() {
   }
 
   return (
-    <div className="container-fluid mt-4">
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2>Dashboard</h2>
-        <button className="btn btn-outline-primary btn-sm" onClick={loadDashboardStats}>
+    <div className="container-fluid mt-4 dashboard-container">
+      <div className="dashboard-header d-flex justify-content-between align-items-center">
+        <div>
+          <h2>
+            <i className="bi bi-speedometer2 me-3"></i>
+            Dashboard
+          </h2>
+          <p className="mb-0 mt-2" style={{ opacity: 0.9 }}>
+            Hoş geldiniz! İşte işletmenizin anlık görünümü
+          </p>
+        </div>
+        <button className="btn" onClick={loadDashboardStats}>
           <i className="bi bi-arrow-clockwise me-2"></i>
           Yenile
         </button>
@@ -73,39 +82,47 @@ export default function Home() {
 
       {/* Satış İstatistikleri */}
       <div className="row mb-4">
-        <div className="col-md-3">
-          <div className="card text-bg-primary">
-            <div className="card-body">
-              <h6 className="card-title">Bugünkü Satışlar</h6>
-              <h3 className="mb-0">{formatCurrency(stats?.todaySales)}</h3>
-              <small>Günlük toplam</small>
+        <div className="col-md-3 mb-3">
+          <div className="stat-card stat-card-primary">
+            <i className="bi bi-calendar-day stat-icon"></i>
+            <h6>Bugünkü Satışlar</h6>
+            <h3>{formatCurrency(stats?.todaySales)}</h3>
+            <small>Günlük toplam</small>
+            <div className="progress-thin mt-3">
+              <div className="progress-bar" style={{ width: '75%' }}></div>
             </div>
           </div>
         </div>
-        <div className="col-md-3">
-          <div className="card text-bg-success">
-            <div className="card-body">
-              <h6 className="card-title">Haftalık Satışlar</h6>
-              <h3 className="mb-0">{formatCurrency(stats?.weeklySales)}</h3>
-              <small>Son 7 gün</small>
+        <div className="col-md-3 mb-3">
+          <div className="stat-card stat-card-success">
+            <i className="bi bi-calendar-week stat-icon"></i>
+            <h6>Haftalık Satışlar</h6>
+            <h3>{formatCurrency(stats?.weeklySales)}</h3>
+            <small>Son 7 gün</small>
+            <div className="progress-thin mt-3">
+              <div className="progress-bar" style={{ width: '85%' }}></div>
             </div>
           </div>
         </div>
-        <div className="col-md-3">
-          <div className="card text-bg-info">
-            <div className="card-body">
-              <h6 className="card-title">Aylık Satışlar</h6>
-              <h3 className="mb-0">{formatCurrency(stats?.monthlySales)}</h3>
-              <small>Son 30 gün</small>
+        <div className="col-md-3 mb-3">
+          <div className="stat-card stat-card-info">
+            <i className="bi bi-calendar-month stat-icon"></i>
+            <h6>Aylık Satışlar</h6>
+            <h3>{formatCurrency(stats?.monthlySales)}</h3>
+            <small>Son 30 gün</small>
+            <div className="progress-thin mt-3">
+              <div className="progress-bar" style={{ width: '92%' }}></div>
             </div>
           </div>
         </div>
-        <div className="col-md-3">
-          <div className="card text-bg-warning text-dark">
-            <div className="card-body">
-              <h6 className="card-title">Yıllık Satışlar</h6>
-              <h3 className="mb-0">{formatCurrency(stats?.yearlySales)}</h3>
-              <small>Son 12 ay</small>
+        <div className="col-md-3 mb-3">
+          <div className="stat-card stat-card-warning">
+            <i className="bi bi-calendar-range stat-icon"></i>
+            <h6>Yıllık Satışlar</h6>
+            <h3>{formatCurrency(stats?.yearlySales)}</h3>
+            <small>Son 12 ay</small>
+            <div className="progress-thin mt-3">
+              <div className="progress-bar" style={{ width: '100%' }}></div>
             </div>
           </div>
         </div>
@@ -113,60 +130,67 @@ export default function Home() {
 
       {/* Genel İstatistikler */}
       <div className="row mb-4">
-        <div className="col-md-3">
-          <div className="card border-primary">
+        <div className="col-md-3 mb-3">
+          <div className="info-card">
             <div className="card-body">
               <div className="d-flex justify-content-between align-items-center">
                 <div>
-                  <h6 className="text-muted mb-1">Toplam Ürün</h6>
-                  <h4 className="mb-0">{stats?.totalProducts || 0}</h4>
+                  <h6>Toplam Ürün</h6>
+                  <h4>{stats?.totalProducts || 0}</h4>
                 </div>
-                <div className="text-primary" style={{ fontSize: '2rem' }}>
+                <div className="icon-wrapper icon-wrapper-primary">
                   <i className="bi bi-box-seam"></i>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div className="col-md-3">
-          <div className="card border-danger">
+        <div className="col-md-3 mb-3">
+          <div className="info-card">
             <div className="card-body">
               <div className="d-flex justify-content-between align-items-center">
                 <div>
-                  <h6 className="text-muted mb-1">Düşük Stok</h6>
-                  <h4 className="mb-0 text-danger">{stats?.lowStockProducts || 0}</h4>
+                  <h6>Düşük Stok</h6>
+                  <h4 className="text-danger">
+                    {stats?.lowStockProducts || 0}
+                    {stats?.lowStockProducts > 0 && (
+                      <span className="pulse-animation ms-2">
+                        <i className="bi bi-exclamation-circle"></i>
+                      </span>
+                    )}
+                  </h4>
                 </div>
-                <div className="text-danger" style={{ fontSize: '2rem' }}>
+                <div className="icon-wrapper icon-wrapper-danger">
                   <i className="bi bi-exclamation-triangle"></i>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div className="col-md-3">
-          <div className="card border-success">
+        <div className="col-md-3 mb-3">
+          <div className="info-card">
             <div className="card-body">
               <div className="d-flex justify-content-between align-items-center">
                 <div>
-                  <h6 className="text-muted mb-1">Toplam Müşteri</h6>
-                  <h4 className="mb-0">{stats?.totalCustomers || 0}</h4>
+                  <h6>Toplam Müşteri</h6>
+                  <h4>{stats?.totalCustomers || 0}</h4>
                 </div>
-                <div className="text-success" style={{ fontSize: '2rem' }}>
+                <div className="icon-wrapper icon-wrapper-success">
                   <i className="bi bi-people"></i>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div className="col-md-3">
-          <div className="card border-info">
+        <div className="col-md-3 mb-3">
+          <div className="info-card">
             <div className="card-body">
               <div className="d-flex justify-content-between align-items-center">
                 <div>
-                  <h6 className="text-muted mb-1">Stok Değeri</h6>
-                  <h4 className="mb-0">{formatCurrency(stats?.totalStockValue)}</h4>
+                  <h6>Stok Değeri</h6>
+                  <h4>{formatCurrency(stats?.totalStockValue)}</h4>
                 </div>
-                <div className="text-info" style={{ fontSize: '2rem' }}>
+                <div className="icon-wrapper icon-wrapper-info">
                   <i className="bi bi-currency-dollar"></i>
                 </div>
               </div>
@@ -178,13 +202,19 @@ export default function Home() {
       <div className="row">
         {/* En Çok Satan Ürünler */}
         <div className="col-md-6 mb-4">
-          <div className="card">
+          <div className="table-card">
             <div className="card-header">
-              <h5 className="mb-0">En Çok Satan Ürünler</h5>
+              <h5>
+                <i className="bi bi-trophy me-2"></i>
+                En Çok Satan Ürünler
+              </h5>
             </div>
             <div className="card-body">
               {stats?.topSellingProducts?.length === 0 ? (
-                <p className="text-muted text-center">Henüz satış yok</p>
+                <div className="empty-state">
+                  <i className="bi bi-cart-x"></i>
+                  <p className="mb-0">Henüz satış yok</p>
+                </div>
               ) : (
                 <div className="table-responsive">
                   <table className="table table-sm table-hover">
@@ -219,13 +249,19 @@ export default function Home() {
 
         {/* En İyi Müşteriler */}
         <div className="col-md-6 mb-4">
-          <div className="card">
+          <div className="table-card">
             <div className="card-header">
-              <h5 className="mb-0">En İyi Müşteriler</h5>
+              <h5>
+                <i className="bi bi-star me-2"></i>
+                En İyi Müşteriler
+              </h5>
             </div>
             <div className="card-body">
               {stats?.topCustomers?.length === 0 ? (
-                <p className="text-muted text-center">Henüz müşteri yok</p>
+                <div className="empty-state">
+                  <i className="bi bi-people"></i>
+                  <p className="mb-0">Henüz müşteri yok</p>
+                </div>
               ) : (
                 <div className="table-responsive">
                   <table className="table table-sm table-hover">
@@ -262,13 +298,19 @@ export default function Home() {
       <div className="row">
         {/* En Başarılı Çalışanlar */}
         <div className="col-md-6 mb-4">
-          <div className="card">
+          <div className="table-card">
             <div className="card-header">
-              <h5 className="mb-0">En Başarılı Çalışanlar</h5>
+              <h5>
+                <i className="bi bi-award me-2"></i>
+                En Başarılı Çalışanlar
+              </h5>
             </div>
             <div className="card-body">
               {stats?.topEmployees?.length === 0 ? (
-                <p className="text-muted text-center">Henüz satış yok</p>
+                <div className="empty-state">
+                  <i className="bi bi-person-badge"></i>
+                  <p className="mb-0">Henüz satış yok</p>
+                </div>
               ) : (
                 <div className="table-responsive">
                   <table className="table table-sm table-hover">
@@ -303,16 +345,19 @@ export default function Home() {
 
         {/* Düşük Stok Uyarıları */}
         <div className="col-md-6 mb-4">
-          <div className="card border-danger">
-            <div className="card-header bg-danger text-white">
-              <h5 className="mb-0">
+          <div className="alert-card">
+            <div className="card-header">
+              <h5>
                 <i className="bi bi-exclamation-triangle me-2"></i>
                 Düşük Stok Uyarıları
               </h5>
             </div>
             <div className="card-body">
               {stats?.lowStockAlerts?.length === 0 ? (
-                <p className="text-muted text-center">Stok uyarısı yok</p>
+                <div className="empty-state">
+                  <i className="bi bi-check-circle"></i>
+                  <p className="mb-0">Stok uyarısı yok</p>
+                </div>
               ) : (
                 <div className="table-responsive">
                   <table className="table table-sm table-hover">
@@ -358,13 +403,19 @@ export default function Home() {
       {/* Son Satışlar */}
       <div className="row">
         <div className="col-12 mb-4">
-          <div className="card">
+          <div className="table-card">
             <div className="card-header">
-              <h5 className="mb-0">Son Satışlar</h5>
+              <h5>
+                <i className="bi bi-clock-history me-2"></i>
+                Son Satışlar
+              </h5>
             </div>
             <div className="card-body">
               {stats?.recentSales?.length === 0 ? (
-                <p className="text-muted text-center">Henüz satış yok</p>
+                <div className="empty-state">
+                  <i className="bi bi-receipt"></i>
+                  <p className="mb-0">Henüz satış yok</p>
+                </div>
               ) : (
                 <div className="table-responsive">
                   <table className="table table-sm table-hover">
