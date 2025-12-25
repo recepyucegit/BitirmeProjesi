@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TeknoRoma.Application.DTOs.Category;
 using TeknoRoma.Application.Interfaces.Services;
@@ -6,6 +7,7 @@ namespace TeknoRoma.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class CategoryController : ControllerBase
 {
     private readonly ICategoryService _categoryService;

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TeknoRoma.Application.DTOs.SupplierTransaction;
 using TeknoRoma.Application.Interfaces.Services;
@@ -6,6 +7,7 @@ namespace TeknoRoma.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class SupplierTransactionController : ControllerBase
 {
     private readonly ISupplierTransactionService _transactionService;

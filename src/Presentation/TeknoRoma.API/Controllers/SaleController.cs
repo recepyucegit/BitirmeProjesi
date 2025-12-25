@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TeknoRoma.Application.DTOs.Sale;
 using TeknoRoma.Application.Interfaces.Services;
@@ -6,6 +7,7 @@ namespace TeknoRoma.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class SaleController : ControllerBase
 {
     private readonly ISaleService _saleService;
@@ -134,6 +136,7 @@ public class SaleController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin,BranchManager,Cashier")]
     public async Task<ActionResult<SaleDto>> CreateSale([FromBody] CreateSaleDto createSaleDto)
     {
         try
@@ -157,6 +160,7 @@ public class SaleController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [Authorize(Roles = "Admin,BranchManager")]
     public async Task<ActionResult<SaleDto>> UpdateSale(int id, [FromBody] UpdateSaleDto updateSaleDto)
     {
         try
@@ -185,6 +189,7 @@ public class SaleController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult> DeleteSale(int id)
     {
         try

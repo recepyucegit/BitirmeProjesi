@@ -128,32 +128,40 @@ public class DatabaseSeeder
         // 7. Roller
         var roles = new List<Role>
         {
-            new() { Name = "Admin", Description = "Sistem yöneticisi" },
-            new() { Name = "Manager", Description = "Mağaza müdürü" },
-            new() { Name = "Sales", Description = "Satış elemanı" },
-            new() { Name = "Accountant", Description = "Muhasebeci" }
+            new() { Name = "Admin", Description = "Sistem yöneticisi - Tüm yetkilere sahip" },
+            new() { Name = "BranchManager", Description = "Şube müdürü - Mağaza yönetimi" },
+            new() { Name = "Cashier", Description = "Kasiyer - Satış işlemleri" },
+            new() { Name = "Accounting", Description = "Muhasebe - Gider ve finansal işlemler" },
+            new() { Name = "Warehouse", Description = "Depo sorumlusu - Stok ve tedarik" },
+            new() { Name = "TechnicalService", Description = "Teknik servis" }
         };
         await _context.Roles.AddRangeAsync(roles);
         await _context.SaveChangesAsync();
 
-        // 8. Admin Kullanıcı
-        var adminUser = new User
+        // 8. Test Kullanıcıları
+        var users = new List<User>
         {
-            Username = "admin",
-            Email = "admin@teknoroms.com",
-            PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin123!"),
-            IsActive = true
+            new() { Username = "admin", Email = "admin@teknoroms.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("admin123"), IsActive = true },
+            new() { Username = "manager", Email = "manager@teknoroms.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("manager123"), IsActive = true },
+            new() { Username = "cashier", Email = "cashier@teknoroms.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("cashier123"), IsActive = true },
+            new() { Username = "accounting", Email = "accounting@teknoroms.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("accounting123"), IsActive = true },
+            new() { Username = "warehouse", Email = "warehouse@teknoroms.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("warehouse123"), IsActive = true },
+            new() { Username = "techservice", Email = "techservice@teknoroms.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("techservice123"), IsActive = true }
         };
-        await _context.Users.AddAsync(adminUser);
+        await _context.Users.AddRangeAsync(users);
         await _context.SaveChangesAsync();
 
-        // Admin role assignment
-        var adminUserRole = new UserRole
+        // Rol atamaları
+        var userRoles = new List<UserRole>
         {
-            UserId = adminUser.Id,
-            RoleId = roles.First(r => r.Name == "Admin").Id
+            new() { UserId = users[0].Id, RoleId = roles.First(r => r.Name == "Admin").Id },
+            new() { UserId = users[1].Id, RoleId = roles.First(r => r.Name == "BranchManager").Id },
+            new() { UserId = users[2].Id, RoleId = roles.First(r => r.Name == "Cashier").Id },
+            new() { UserId = users[3].Id, RoleId = roles.First(r => r.Name == "Accounting").Id },
+            new() { UserId = users[4].Id, RoleId = roles.First(r => r.Name == "Warehouse").Id },
+            new() { UserId = users[5].Id, RoleId = roles.First(r => r.Name == "TechnicalService").Id }
         };
-        await _context.UserRoles.AddAsync(adminUserRole);
+        await _context.UserRoles.AddRangeAsync(userRoles);
         await _context.SaveChangesAsync();
 
         // 9. Çalışanlar

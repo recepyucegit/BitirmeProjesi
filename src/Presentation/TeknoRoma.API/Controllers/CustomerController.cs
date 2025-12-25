@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TeknoRoma.Application.DTOs.Customer;
 using TeknoRoma.Application.Interfaces.Services;
@@ -6,6 +7,7 @@ namespace TeknoRoma.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class CustomerController : ControllerBase
 {
     private readonly ICustomerService _customerService;
