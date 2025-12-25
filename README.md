@@ -6,11 +6,23 @@ TeknoRoma, 55 mağaza ve 258 çalışan ile Türkiye'nin önde gelen elektronik 
 
 ## Teknoloji Stacki
 
-- **Backend**: ASP.NET Core 7.0 Web API
+### Backend
+- **Framework**: ASP.NET Core 7.0 Web API
 - **Mimari**: Onion Architecture (Clean Architecture)
-- **Database**: SQL Server
-- **ORM**: Entity Framework Core
-- **Frontend**: React (Modern Web Application)
+- **Database**: Entity Framework Core InMemory Database
+- **ORM**: Entity Framework Core 7.0.20
+- **Authentication**: JWT Bearer Token
+- **Password Hashing**: BCrypt.Net-Next 4.0.3
+- **Excel Export**: EPPlus 7.3.2
+- **Test Data**: Bogus 35.6.5
+
+### Frontend
+- **Framework**: React 18 + Vite
+- **Routing**: React Router DOM v6
+- **HTTP Client**: Axios
+- **UI Library**: Bootstrap 5
+- **Styling**: Custom CSS
+- **Tabs**: react-tabs 6.0.2
 
 ## Mimari Yapı
 
@@ -107,10 +119,18 @@ Proje katmanlı mimari ile geliştirilmiştir:
   - Satış takibi (Sale → Store)
   - Gider takibi (Expense → Store)
 
-### 7. Depo Yönetimi
-- Gerçek zamanlı stok takibi
-- Satış-depo entegrasyonu
-- Ürün hazırlama ve teslimat yönetimi
+### 7. Tedarikçi Sipariş Yönetimi
+- **Comprehensive Order Management**: Kapsamlı sipariş takibi
+- **Multi-Product Orders**: Çoklu ürün siparişleri
+- **Stock Integration**: Otomatik stok güncellemesi
+- **Order Status Tracking**:
+  - Pending (Beklemede)
+  - Approved (Onaylandı)
+  - Received (Teslim Alındı)
+  - Cancelled (İptal Edildi)
+- **Payment Methods**: Çoklu ödeme yöntemleri
+- **Order Details**: Ürün bazlı sipariş detayları
+- **Supplier Linking**: Tedarikçi-sipariş ilişkilendirmesi
 
 ### 8. Muhasebe ve Gider Yönetimi Modülü
 - **Comprehensive Expense Tracking**: Kapsamlı gider takibi
@@ -146,40 +166,120 @@ Proje katmanlı mimari ile geliştirilmiştir:
 
 ## Raporlama Sistemi
 
-### Şube Müdürü Raporları
+### 📊 Dashboard (Ana Sayfa)
+Kapsamlı yönetim paneli ile tüm işletme metriklerini tek ekranda görüntüleme:
 
-1. **Stok Takip Raporu**
-   - Ürün stok durumları
-   - Kritik seviyenin altındaki ürünler
-   - Kategori bazlı stok analizi
+**Satış İstatistikleri**
+- Bugünkü satışlar
+- Haftalık satışlar (Son 7 gün)
+- Aylık satışlar (Son 30 gün)
+- Yıllık satışlar (Son 12 ay)
 
-2. **Satış Takip Raporu**
-   - Çalışan bazlı satış performansı
-   - Satış kotası ve prim hesaplaması
-   - En çok satan 10 ürün
-   - Müşteri kitle analizi (yaş, cinsiyet)
-   - Cross-selling analizi (birlikte satılan ürünler)
+**Genel İstatistikler**
+- Toplam ürün sayısı
+- Düşük stok uyarıları
+- Toplam müşteri sayısı
+- Toplam stok değeri
 
-3. **Tedarikçi Hareket Raporu**
-   - Aylık alım detayları
-   - Tedarikçi bazlı harcamalar
-   - Ürün bazlı tedarik analizi
+**Top Performanslar**
+- En çok satan ürünler (Top 5)
+- En iyi müşteriler (Top 5)
+- En başarılı çalışanlar (Top 5)
+- Düşük stok uyarıları (Kritik seviyenin altındaki ürünler)
 
-4. **Ürün Liste Raporu**
-   - Kategori bazlı ürün listeleme
-   - Fiyat ve stok bilgileri
-   - Satılmayan ürünler (Slow-moving stock)
+**Son İşlemler**
+- Son 10 satış kaydı
+- Anlık yenileme özelliği
 
-5. **Gider Raporu**
-   - Tüm gider kategorileri
-   - Döviz kuru bazlı hesaplama
-   - Aylık/yıllık karşılaştırma
+### 📈 Raporlar Modülü
 
-### Rapor Formatları
-- Excel Export
-- PDF Export
-- Ekran Görüntüleme
-- Yazdırma
+#### 1. Satış Raporları
+**Özet Bilgiler**
+- Toplam satış miktarı
+- Ortalama satış tutarı
+- Satış adedi
+- Tarih aralığı filtreleme
+
+**Detaylı Satış Listesi**
+- Satış tarihi ve saati
+- Müşteri bilgileri
+- Çalışan bilgileri
+- Mağaza bilgileri
+- Ürün detayları
+- Ödeme yöntemi
+- Toplam tutar
+
+**Top Performans**
+- En çok satan ürünler (Miktar ve gelir bazlı)
+- En iyi müşteriler (Alışveriş sayısı ve harcama)
+
+**Excel Export**: Tüm satış verileri Excel formatında indirilebilir
+
+#### 2. Stok Raporları
+**Genel Stok Durumu**
+- Toplam ürün çeşidi
+- Toplam stok değeri
+- Düşük stok ürün sayısı
+
+**Detaylı Stok Listesi**
+- Ürün adı ve barkodu
+- Kategori
+- Mevcut stok miktarı
+- Minimum stok seviyesi
+- Birim fiyat
+- Toplam değer
+- Stok durumu (Normal/Düşük/Kritik)
+
+**Düşük Stok Uyarıları**
+- Minimum seviyenin altındaki ürünler
+- Kategori bazlı gruplama
+
+**Excel Export**: Stok raporu Excel formatında indirilebilir
+
+#### 3. Gider Raporları
+**Gider Özeti**
+- Toplam gider tutarı (TL bazında)
+- Bekleyen gider sayısı
+- Onaylanan gider sayısı
+
+**Detaylı Gider Listesi**
+- Gider tarihi
+- Kategori (Operasyonel, Bakım, Pazarlama, vb.)
+- Açıklama
+- Mağaza bilgisi
+- Çalışan bilgisi
+- Tutar ve döviz
+- TL karşılığı
+- Durum (Beklemede/Onaylandı/Ödendi)
+- Ödeme yöntemi
+
+**Kategori Bazlı Analiz**
+- Gider kategorilerine göre dağılım
+- Tarih aralığı filtreleme
+
+**Excel Export**: Gider raporu Excel formatında indirilebilir
+
+### 📅 Rapor Özellikleri
+
+**Tarih Filtreleme**
+- Başlangıç ve bitiş tarihi seçimi
+- Varsayılan: Son 30 gün
+- Özel tarih aralığı belirleme
+
+**Excel Export Özellikleri**
+- EPPlus 7.3.2 kütüphanesi ile profesyonel Excel dosyaları
+- Otomatik sütun genişliği ayarlama
+- Başlık satırı formatlama (Bold, Background Color)
+- Freeze Pane (Başlık satırını sabitle)
+- Auto Filter (Otomatik filtre)
+- Türkçe karakter desteği
+- Tarih ve para formatları
+- NonCommercial lisans ile ücretsiz kullanım
+
+**Performans**
+- Sayfalama (Pagination) desteği
+- Lazy loading
+- Tarih aralığı sınırlama
 
 ## Önemli İş Kuralları
 
@@ -229,31 +329,93 @@ Proje katmanlı mimari ile geliştirilmiştir:
 ## Kurulum
 
 ### Gereksinimler
-- .NET 7.0 SDK
-- SQL Server 2019 veya üzeri
-- Node.js 18+ (Frontend için)
+- **.NET 7.0 SDK** ([İndir](https://dotnet.microsoft.com/download/dotnet/7.0))
+- **Node.js 18+** ve npm ([İndir](https://nodejs.org/))
+- **Git** ([İndir](https://git-scm.com/))
+
+### Projeyi İndirme
+```bash
+# Projeyi klonlayın
+git clone https://github.com/recepyucegit/BitirmeProjesi.git
+cd BitirmeProjesi
+```
 
 ### Backend Kurulumu
 ```bash
+# API klasörüne gidin
 cd src/Presentation/TeknoRoma.API
+
+# NuGet paketlerini yükleyin
 dotnet restore
+
+# Projeyi derleyin
 dotnet build
+
+# Uygulamayı çalıştırın
 dotnet run
 ```
 
+Backend başarıyla çalıştığında:
+- **API**: http://localhost:5000 veya https://localhost:5001
+- **Swagger UI**: https://localhost:5001/swagger
+
 ### Frontend Kurulumu
 ```bash
+# Frontend klasörüne gidin (yeni terminal)
 cd teknoroma-frontend
+
+# npm paketlerini yükleyin
 npm install
+
+# Development server'ı başlatın
 npm run dev
 ```
 
-### Database Migration
+Frontend başarıyla çalıştığında:
+- **Web App**: http://localhost:5173
+
+### Veritabanı Yapılandırması
+
+**Not**: Proje şu anda **InMemory Database** kullanıyor. Hiçbir veritabanı kurulumuna gerek yok!
+
+`appsettings.json` dosyasında:
+```json
+{
+  "UseInMemoryDatabase": true
+}
+```
+
+**SQL Server kullanmak isterseniz**:
+1. `appsettings.json` dosyasında `UseInMemoryDatabase: false` yapın
+2. `ConnectionStrings:DefaultConnection` bağlantı cümlesini düzenleyin
+3. Migration komutlarını çalıştırın:
+
 ```bash
 cd src/Infrastructure/TeknoRoma.Infrastructure
-dotnet ef migrations add InitialCreate
-dotnet ef database update
+dotnet ef migrations add InitialCreate --startup-project ../../Presentation/TeknoRoma.API
+dotnet ef database update --startup-project ../../Presentation/TeknoRoma.API
 ```
+
+### İlk Kullanıcı (Seed Data)
+
+Uygulama ilk çalıştırıldığında otomatik seed data yüklenir:
+
+**Test Kullanıcıları**:
+- **Admin**: `admin` / `admin123`
+- **Müdür**: `manager` / `manager123`
+- **Kasiyer**: `cashier` / `cashier123`
+
+**Seed Data İçeriği**:
+- 6 Kullanıcı (Admin, Manager, Cashier, Warehouse, Accounting, TechService)
+- 10 Kategori
+- 50 Ürün
+- 30 Müşteri
+- 20 Tedarikçi
+- 30 Çalışan
+- 10 Mağaza
+- 30 Satış (Shopping Cart ile)
+- 20 Tedarikçi Siparişi
+- 40 Gider Kaydı
 
 ## API Endpoints
 
@@ -319,11 +481,36 @@ dotnet ef database update
 - PUT /api/sales/{id}
 - DELETE /api/sales/{id}
 
-### Reports
-- GET /api/reports/stock
-- GET /api/reports/sales
-- GET /api/reports/suppliers
-- GET /api/reports/expenses
+### Supplier Transactions
+- GET /api/supplier-transactions (Tüm Siparişler - Paginated)
+- GET /api/supplier-transactions/{id} (Sipariş Detay)
+- GET /api/supplier-transactions/supplier/{supplierId} (Tedarikçi Siparişleri)
+- POST /api/supplier-transactions (Sipariş Oluştur)
+- PUT /api/supplier-transactions/{id} (Sipariş Güncelle)
+- DELETE /api/supplier-transactions/{id} (Sipariş Sil)
+
+### Reports & Dashboard
+**Dashboard**
+- GET /api/report/dashboard (Dashboard İstatistikleri)
+
+**Sales Reports**
+- GET /api/report/sales (Detaylı Satış Raporu - Paginated)
+- GET /api/report/sales/summary (Satış Özeti)
+- GET /api/report/sales/top-products (En Çok Satan Ürünler)
+- GET /api/report/sales/top-customers (En İyi Müşteriler)
+- POST /api/report/sales/export (Excel Export)
+
+**Stock Reports**
+- GET /api/report/stock (Stok Raporu - Paginated)
+- GET /api/report/stock/low-stock (Düşük Stok Uyarıları)
+- GET /api/report/stock/summary (Stok Özeti)
+- POST /api/report/stock/export (Excel Export)
+
+**Expense Reports**
+- GET /api/report/expenses (Gider Raporu - Paginated)
+- GET /api/report/expenses/summary (Gider Özeti)
+- GET /api/report/expenses/by-category (Kategori Bazlı)
+- POST /api/report/expenses/export (Excel Export)
 
 ## Güvenlik
 
@@ -364,20 +551,137 @@ dotnet test
 - ✓ Multi-currency calculations
 - ✓ Status transitions
 
-## Katkıda Bulunanlar
+## Özellikler ve Modüller
 
-- Backend Development Team
-- Frontend Development Team
-- Database Design Team
+### ✅ Tamamlanan Modüller
+1. ✅ **Authentication & Authorization** - JWT Token, Role-Based Access
+2. ✅ **Category Management** - Kategori CRUD işlemleri
+3. ✅ **Product Management** - Ürün yönetimi, stok takibi
+4. ✅ **Customer Management** - Müşteri kayıt ve yönetimi
+5. ✅ **Supplier Management** - Tedarikçi yönetimi
+6. ✅ **Employee Management** - Çalışan kayıtları ve yönetimi
+7. ✅ **Sales Management** - Satış işlemleri, shopping cart
+8. ✅ **Store Management** - 55 mağaza yönetimi
+9. ✅ **Expense Management** - Gider takibi ve onay sistemi
+10. ✅ **Supplier Transactions** - Tedarikçi sipariş yönetimi
+11. ✅ **Reports Module** - Satış, Stok, Gider raporları
+12. ✅ **Dashboard** - Kapsamlı yönetim paneli
+13. ✅ **Excel Export** - EPPlus ile Excel dışa aktarma
+
+### 🎨 Frontend Sayfaları
+- ✅ Login Page (Giriş)
+- ✅ Dashboard / Home Page (Ana Sayfa)
+- ✅ Categories (Kategoriler)
+- ✅ Products (Ürünler)
+- ✅ Customers (Müşteriler)
+- ✅ Suppliers (Tedarikçiler)
+- ✅ Employees (Çalışanlar)
+- ✅ Sales (Satışlar)
+- ✅ Stores (Mağazalar)
+- ✅ Expenses (Giderler)
+- ✅ Supplier Transactions (Tedarikçi Siparişleri)
+- ✅ Reports (Raporlar)
+
+## Proje İstatistikleri
+
+**Backend**
+- 12 Controller
+- 30+ Entity
+- 50+ DTO
+- 15+ Repository
+- 10+ Service
+- 100+ API Endpoint
+
+**Frontend**
+- 12 Sayfa
+- 20+ Komponent
+- React Router v6
+- Axios HTTP Client
+- Bootstrap 5 UI
+
+**Test Coverage**
+- 47 Unit Test (Tümü Başarılı)
+- Entity Tests
+- Repository Tests
+- Service Tests
+
+**Seed Data**
+- 6 Kullanıcı
+- 10 Kategori
+- 50 Ürün
+- 30 Müşteri
+- 20 Tedarikçi
+- 30 Çalışan
+- 10 Mağaza
+- 30 Satış
+- 20 Sipariş
+- 40 Gider
+
+## Kullanılan Design Patterns
+
+- **Repository Pattern**: Veri erişim katmanı soyutlaması
+- **Unit of Work Pattern**: Transaction yönetimi
+- **Dependency Injection**: IoC Container (.NET DI)
+- **DTO Pattern**: Veri transfer objeleri
+- **Factory Pattern**: Bogus seed data üretimi
+- **Middleware Pattern**: JWT Authentication
+- **Service Layer Pattern**: Business logic ayrımı
+- **CQRS (Partial)**: Command/Query ayrımı
+
+## Best Practices
+
+✅ **Clean Architecture** (Onion Architecture)
+✅ **SOLID Principles**
+✅ **Separation of Concerns**
+✅ **DRY (Don't Repeat Yourself)**
+✅ **Code First Approach**
+✅ **Async/Await Pattern**
+✅ **Global Exception Handling**
+✅ **Soft Delete Implementation**
+✅ **Audit Trail (CreatedBy, UpdatedBy)**
+✅ **Pagination Support**
+✅ **Input Validation**
+✅ **Security Best Practices**
 
 ## Lisans
 
-Bu proje Bitirme Projesi kapsamında geliştirilmiştir.
+Bu proje **Bitirme Projesi** kapsamında geliştirilmiştir.
+
+**EPPlus NonCommercial License**: Bu projede kullanılan EPPlus kütüphanesi NonCommercial lisans altında kullanılmaktadır.
 
 ## İletişim
+
+**GitHub**: [recepyucegit/BitirmeProjesi](https://github.com/recepyucegit/BitirmeProjesi)
 
 Proje ile ilgili sorularınız için issue açabilirsiniz.
 
 ---
 
-**Not**: Bu proje eğitim amaçlı geliştirilmekte olup, gerçek bir işletme senaryosu üzerine kurgulanmıştır. Modern .NET teknolojileri ve best practices kullanılarak Clean Architecture prensiplerine uygun şekilde geliştirilmiştir.
+## Geliştirici Notları
+
+**Not**: Bu proje eğitim amaçlı geliştirilmekte olup, gerçek bir işletme senaryosu (TeknoRoma - 55 mağazalı elektronik perakende zinciri) üzerine kurgulanmıştır.
+
+Modern .NET teknolojileri ve best practices kullanılarak:
+- ✅ Clean Architecture prensiplerine uygun
+- ✅ SOLID prensipleri ile
+- ✅ Test-Driven Development yaklaşımı
+- ✅ Industry-standard güvenlik pratikleri
+- ✅ Scalable ve maintainable kod yapısı
+
+ile geliştirilmiştir.
+
+**Teknoloji Seçimleri**:
+- InMemory Database kullanımı kolay kurulum ve test için idealdir
+- React + Vite modern ve hızlı geliştirme deneyimi sağlar
+- EPPlus 7.3.2 kararlı ve güvenilir Excel export sunar
+- Bootstrap 5 responsive ve modern UI için yeterlidir
+
+**Geliştirme Süreci**:
+1. Day 1-2: Authentication & Core Modules
+2. Day 3-4: Product & Sales Management
+3. Day 4-5: Employee & Sales Features
+4. Day 5-6: Store & Expense Modules
+5. Day 6-7: Supplier Transactions & Comprehensive Seed Data
+6. Day 7-8: Reports Module & Dashboard & Excel Export
+
+**Son Güncelleme**: 2025 - Reports ve Dashboard modülleri tamamlandı
