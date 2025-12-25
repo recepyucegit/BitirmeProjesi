@@ -112,16 +112,18 @@
   border-left: 4px solid #667eea;
 }
 
-.login-info p {
-  margin: 4px 0;
-  font-size: 13px;
-  color: #555;
-}
-
-.login-info p:first-child {
+.login-info .info-title {
+  margin: 0 0 12px 0;
+  font-size: 14px;
   font-weight: 600;
   color: #2c3e50;
-  margin-bottom: 8px;
+}
+
+.login-info .user-info p {
+  margin: 6px 0;
+  font-size: 13px;
+  color: #555;
+  line-height: 1.5;
 }
 
 .login-info strong {

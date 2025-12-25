@@ -86,9 +86,13 @@ const Login = () => {
           </button>
 
           <div className="login-info">
-            <p>Varsayılan Kullanıcı:</p>
-            <p><strong>Kullanıcı Adı:</strong> admin</p>
-            <p><strong>Şifre:</strong> Admin123!</p>
+            <p className="info-title">Test Kullanıcıları:</p>
+            <div className="user-info">
+              <p><strong>Admin:</strong> admin / admin123</p>
+              <p><strong>Müdür:</strong> manager / manager123</p>
+              <p><strong>Kasiyer:</strong> cashier / cashier123</p>
+              <p><strong>Muhasebe:</strong> accounting / accounting123</p>
+            </div>
           </div>
         </form>
       </div>
