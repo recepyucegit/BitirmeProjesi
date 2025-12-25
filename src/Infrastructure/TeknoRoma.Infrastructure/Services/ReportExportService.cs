@@ -13,7 +13,7 @@ public class ReportExportService : IReportExportService
     public ReportExportService(IReportRepository reportRepository)
     {
         _reportRepository = reportRepository;
-        // Set EPPlus license context
+        // Set EPPlus license context for non-commercial use (EPPlus 7.x)
         ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
     }
 

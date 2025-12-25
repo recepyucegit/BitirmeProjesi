@@ -9,6 +9,10 @@ using TeknoRoma.Application.Validators;
 using TeknoRoma.Infrastructure.Data;
 using TeknoRoma.Infrastructure.Extensions;
 
+// EPPlus License ayarı - NonCommercial kullanımı için (EPPlus 8+)
+// Environment variable ile ayarlama
+Environment.SetEnvironmentVariable("EPPlus:License", "NonCommercial");
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container

@@ -336,4 +336,48 @@ export const supplierTransactionAPI = {
   delete: (id) => api.delete(`/suppliertransaction/${id}`),
 };
 
+// Report API endpoints
+export const reportAPI = {
+  // Dashboard stats
+  getDashboardStats: () => api.get('/report/dashboard'),
+
+  // Sales reports
+  getSalesReport: (params) => api.get('/report/sales', { params }),
+  getSalesSummary: (startDate, endDate) => api.get('/report/sales/summary', {
+    params: { startDate, endDate }
+  }),
+  getTopSellingProducts: (count = 10, startDate, endDate) => api.get('/report/sales/top-products', {
+    params: { count, startDate, endDate }
+  }),
+  getTopCustomers: (count = 10, startDate, endDate) => api.get('/report/sales/top-customers', {
+    params: { count, startDate, endDate }
+  }),
+  getTopEmployees: (count = 10, startDate, endDate) => api.get('/report/sales/top-employees', {
+    params: { count, startDate, endDate }
+  }),
+  exportSalesReport: (params) => api.post('/report/sales/export', null, {
+    params,
+    responseType: 'blob'
+  }),
+
+  // Stock reports
+  getStockReport: (params) => api.get('/report/stock', { params }),
+  getLowStockAlerts: () => api.get('/report/stock/low-stock-alerts'),
+  getStockSummary: () => api.get('/report/stock/summary'),
+  exportStockReport: (params) => api.post('/report/stock/export', null, {
+    params,
+    responseType: 'blob'
+  }),
+
+  // Expense reports
+  getExpenseReport: (params) => api.get('/report/expenses', { params }),
+  getExpenseSummary: (startDate, endDate) => api.get('/report/expenses/summary', {
+    params: { startDate, endDate }
+  }),
+  exportExpenseReport: (params) => api.post('/report/expenses/export', null, {
+    params,
+    responseType: 'blob'
+  }),
+};
+
 export default api;
