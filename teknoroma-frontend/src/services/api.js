@@ -304,4 +304,36 @@ export const expenseAPI = {
   delete: (id) => api.delete(`/expense/${id}`),
 };
 
+// SupplierTransaction API endpoints
+export const supplierTransactionAPI = {
+  // Tüm tedarikçi işlemlerini getir
+  getAll: () => api.get('/suppliertransaction'),
+
+  // ID'ye göre tedarikçi işlemi getir
+  getById: (id) => api.get(`/suppliertransaction/${id}`),
+
+  // Tedarikçiye göre işlemleri getir
+  getBySupplierId: (supplierId) => api.get(`/suppliertransaction/supplier/${supplierId}`),
+
+  // Çalışana göre işlemleri getir
+  getByEmployeeId: (employeeId) => api.get(`/suppliertransaction/employee/${employeeId}`),
+
+  // Duruma göre işlemleri getir
+  getByStatus: (status) => api.get(`/suppliertransaction/status/${status}`),
+
+  // Tarih aralığına göre işlemleri getir
+  getByDateRange: (startDate, endDate) => api.get('/suppliertransaction/daterange', {
+    params: { startDate, endDate }
+  }),
+
+  // Yeni tedarikçi işlemi oluştur
+  create: (data) => api.post('/suppliertransaction', data),
+
+  // Tedarikçi işlemini güncelle
+  update: (id, data) => api.put(`/suppliertransaction/${id}`, data),
+
+  // Tedarikçi işlemini sil
+  delete: (id) => api.delete(`/suppliertransaction/${id}`),
+};
+
 export default api;

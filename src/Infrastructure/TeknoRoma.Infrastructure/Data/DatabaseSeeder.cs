@@ -239,6 +239,113 @@ public class DatabaseSeeder
         await _context.Sales.AddRangeAsync(sales);
         await _context.SaveChangesAsync();
 
+        // 11. Tedarikçi Siparişleri
+        var supplierTransactionFaker = new Faker();
+        var supplierTransactions = new List<SupplierTransaction>();
+
+        for (int i = 0; i < 20; i++)
+        {
+            var supplier = supplierTransactionFaker.PickRandom(suppliers);
+            var employee = supplierTransactionFaker.PickRandom(employees);
+            var orderDate = supplierTransactionFaker.Date.Between(DateTime.Now.AddMonths(-6), DateTime.Now);
+
+            var transaction = new SupplierTransaction
+            {
+                SupplierId = supplier.Id,
+                EmployeeId = employee.Id,
+                OrderDate = orderDate,
+                DeliveryDate = supplierTransactionFaker.Random.Bool(0.7f) ? orderDate.AddDays(supplierTransactionFaker.Random.Number(1, 14)) : null,
+                Status = supplierTransactionFaker.PickRandom(new[] { "Delivered", "Delivered", "Ordered", "Cancelled" }), // Çoğunlukla teslim edilmiş
+                OrderNumber = $"ORD-{DateTime.Now.Year}-{(i + 1):D5}",
+                Notes = supplierTransactionFaker.Random.Bool(0.3f) ? supplierTransactionFaker.Lorem.Sentence() : null
+            };
+
+            // Her sipariş için 2-8 arası ürün ekle
+            var transactionDetails = new List<SupplierTransactionDetail>();
+            var numberOfProducts = supplierTransactionFaker.Random.Number(2, 8);
+            var selectedProducts = supplierTransactionFaker.PickRandom(products, numberOfProducts).ToList();
+
+            foreach (var product in selectedProducts)
+            {
+                var quantity = supplierTransactionFaker.Random.Number(10, 50); // Toplu alım
+                var unitPrice = product.CostPrice > 0 ? product.CostPrice : (product.Price * 0.7m); // Alış fiyatı satış fiyatının %70'i
+
+                var detail = new SupplierTransactionDetail
+                {
+                    ProductId = product.Id,
+                    Quantity = quantity,
+                    UnitPrice = unitPrice,
+                    TotalPrice = quantity * unitPrice
+                };
+                transactionDetails.Add(detail);
+            }
+
+            transaction.TotalAmount = transactionDetails.Sum(d => d.TotalPrice);
+            transaction.Details = transactionDetails;
+            supplierTransactions.Add(transaction);
+        }
+
+        await _context.SupplierTransactions.AddRangeAsync(supplierTransactions);
+        await _context.SaveChangesAsync();
+
+        // 12. Giderler
+        var expenseFaker = new Faker();
+        var expenses = new List<Expense>();
+
+        var expenseCategories = new[] { "Utilities", "Rent", "Salaries", "Marketing", "Supplies", "Maintenance", "Transportation", "Insurance", "Other" };
+        var expenseTypes = new[] { "FixedCost", "VariableCost", "Investment" };
+
+        for (int i = 0; i < 40; i++)
+        {
+            var store = expenseFaker.PickRandom(stores);
+            var employee = expenseFaker.Random.Bool(0.7f) ? expenseFaker.PickRandom(employees) : null;
+            var expenseDate = expenseFaker.Date.Between(DateTime.Now.AddMonths(-4), DateTime.Now);
+            var category = expenseFaker.PickRandom(expenseCategories);
+
+            // Para birimi ve kur
+            var currency = expenseFaker.PickRandom(new[] { "TL", "TL", "TL", "USD", "EUR" }); // Çoğunlukla TL
+            var exchangeRate = currency == "TL" ? 1m :
+                              currency == "USD" ? expenseFaker.Random.Decimal(28m, 32m) :
+                              expenseFaker.Random.Decimal(30m, 35m);
+
+            // Kategoriye göre tutar belirleme
+            var amount = category switch
+            {
+                "Rent" => expenseFaker.Random.Decimal(20000, 50000),
+                "Salaries" => expenseFaker.Random.Decimal(30000, 80000),
+                "Utilities" => expenseFaker.Random.Decimal(3000, 10000),
+                "Marketing" => expenseFaker.Random.Decimal(5000, 25000),
+                "Insurance" => expenseFaker.Random.Decimal(8000, 20000),
+                _ => expenseFaker.Random.Decimal(1000, 15000)
+            };
+
+            var expense = new Expense
+            {
+                ExpenseType = expenseFaker.PickRandom(expenseTypes),
+                Description = GetExpenseDescription(category, expenseFaker),
+                Amount = amount,
+                Currency = currency,
+                ExchangeRate = exchangeRate,
+                AmountInTL = amount * exchangeRate,
+                ExpenseDate = expenseDate,
+                EmployeeId = employee?.Id,
+                StoreId = store.Id,
+                InvoiceNumber = expenseFaker.Random.Bool(0.7f) ? $"FTR-{DateTime.Now.Year}-{expenseFaker.Random.Number(1000, 9999)}" : null,
+                Vendor = GetVendorName(category, expenseFaker),
+                Category = category,
+                PaymentMethod = expenseFaker.PickRandom(new[] { "BankTransfer", "Cash", "CreditCard", "Check" }),
+                Status = expenseFaker.PickRandom(new[] { "Approved", "Approved", "Approved", "Pending", "Rejected" }), // Çoğunlukla onaylı
+                ApprovedBy = expenseFaker.Random.Bool(0.8f) ? employees.First().Id : null,
+                ApprovalDate = expenseFaker.Random.Bool(0.8f) ? expenseDate.AddDays(expenseFaker.Random.Number(1, 5)) : null,
+                Notes = expenseFaker.Random.Bool(0.2f) ? expenseFaker.Lorem.Sentence() : null
+            };
+
+            expenses.Add(expense);
+        }
+
+        await _context.Expenses.AddRangeAsync(expenses);
+        await _context.SaveChangesAsync();
+
         Console.WriteLine("✅ Seed data başarıyla oluşturuldu!");
         Console.WriteLine($"   - {categories.Count} Kategori");
         Console.WriteLine($"   - {suppliers.Count} Tedarikçi");
@@ -250,5 +357,38 @@ public class DatabaseSeeder
         Console.WriteLine($"   - {roles.Count} Rol");
         Console.WriteLine($"   - 1 Admin Kullanıcı (username: admin, password: Admin123!)");
         Console.WriteLine($"   - {sales.Count} Satış ({sales.Sum(s => s.SaleDetails?.Count ?? 0)} ürün satışı)");
+        Console.WriteLine($"   - {supplierTransactions.Count} Tedarikçi Siparişi ({supplierTransactions.Sum(t => t.Details?.Count ?? 0)} ürün)");
+        Console.WriteLine($"   - {expenses.Count} Gider (Toplam: {expenses.Where(e => e.Status == "Approved").Sum(e => e.AmountInTL):N2} TL)");
+    }
+
+    private static string GetExpenseDescription(string category, Faker faker)
+    {
+        return category switch
+        {
+            "Utilities" => faker.PickRandom(new[] { "Elektrik faturası", "Su faturası", "Doğalgaz faturası", "İnternet faturası" }),
+            "Rent" => "Mağaza kira ödemesi",
+            "Salaries" => "Çalışan maaş ödemesi",
+            "Marketing" => faker.PickRandom(new[] { "Sosyal medya reklamları", "Google Ads kampanyası", "Billboard reklamı", "Promosyon malzemeleri" }),
+            "Supplies" => faker.PickRandom(new[] { "Ofis malzemeleri", "Temizlik malzemeleri", "Kırtasiye alımı", "Ambalaj malzemeleri" }),
+            "Maintenance" => faker.PickRandom(new[] { "Klima bakımı", "Bilgisayar tamiri", "Mağaza boyası", "Elektrik tamiri" }),
+            "Transportation" => faker.PickRandom(new[] { "Kargo masrafları", "Yakıt gideri", "Araç bakımı" }),
+            "Insurance" => faker.PickRandom(new[] { "İşyeri sigortası", "Mal sigortası", "Sorumluluk sigortası" }),
+            _ => faker.Lorem.Sentence()
+        };
+    }
+
+    private static string GetVendorName(string category, Faker faker)
+    {
+        return category switch
+        {
+            "Utilities" => faker.PickRandom(new[] { "BEDAŞ", "İGDAŞ", "İSKİ", "Türk Telekom", "Vodafone" }),
+            "Rent" => "Gayrimenkul Sahibi",
+            "Marketing" => faker.PickRandom(new[] { "Meta Business", "Google Ads", "Reklam Ajansı", "Basım Evi" }),
+            "Supplies" => faker.PickRandom(new[] { "OfisKırtasiye A.Ş.", "Temizlik Dünyası", "Paketleme Ltd." }),
+            "Maintenance" => faker.PickRandom(new[] { "Teknik Servis A.Ş.", "Bakım Onarım Ltd.", "Profesyonel Hizmet" }),
+            "Transportation" => faker.PickRandom(new[] { "MNG Kargo", "Yurtiçi Kargo", "Aras Kargo", "Shell", "BP" }),
+            "Insurance" => faker.PickRandom(new[] { "Anadolu Sigorta", "Allianz", "Aksigorta" }),
+            _ => faker.Company.CompanyName()
+        };
     }
 }
