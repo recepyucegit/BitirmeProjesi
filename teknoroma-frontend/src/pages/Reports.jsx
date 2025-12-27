@@ -101,52 +101,83 @@ export default function Reports() {
 
   const handleExportSales = async () => {
     try {
+      setLoading(true);
       const blob = await reportAPI.exportSalesReport({ startDate, endDate });
+
+      // Blob validation
+      if (!blob || blob.size === 0) {
+        throw new Error('Excel dosyası oluşturulamadı');
+      }
+
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `SalesReport_${new Date().toISOString().split('T')[0]}.xlsx`;
+      link.download = `Satis_Raporu_${new Date().toISOString().split('T')[0]}.xlsx`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
+
+      alert('✅ Satış raporu başarıyla indirildi!');
     } catch (err) {
       console.error('Export hatası:', err);
-      alert('Rapor dışa aktarılırken bir hata oluştu');
+      alert('❌ Rapor dışa aktarılırken bir hata oluştu: ' + (err.message || 'Bilinmeyen hata'));
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleExportStock = async () => {
     try {
+      setLoading(true);
       const blob = await reportAPI.exportStockReport({});
+
+      if (!blob || blob.size === 0) {
+        throw new Error('Excel dosyası oluşturulamadı');
+      }
+
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `StockReport_${new Date().toISOString().split('T')[0]}.xlsx`;
+      link.download = `Stok_Raporu_${new Date().toISOString().split('T')[0]}.xlsx`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
+
+      alert('✅ Stok raporu başarıyla indirildi!');
     } catch (err) {
       console.error('Export hatası:', err);
-      alert('Rapor dışa aktarılırken bir hata oluştu');
+      alert('❌ Rapor dışa aktarılırken bir hata oluştu: ' + (err.message || 'Bilinmeyen hata'));
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleExportExpenses = async () => {
     try {
+      setLoading(true);
       const blob = await reportAPI.exportExpenseReport({ startDate, endDate });
+
+      if (!blob || blob.size === 0) {
+        throw new Error('Excel dosyası oluşturulamadı');
+      }
+
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `ExpenseReport_${new Date().toISOString().split('T')[0]}.xlsx`;
+      link.download = `Gider_Raporu_${new Date().toISOString().split('T')[0]}.xlsx`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
+
+      alert('✅ Gider raporu başarıyla indirildi!');
     } catch (err) {
       console.error('Export hatası:', err);
-      alert('Rapor dışa aktarılırken bir hata oluştu');
+      alert('❌ Rapor dışa aktarılırken bir hata oluştu: ' + (err.message || 'Bilinmeyen hata'));
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -223,8 +254,12 @@ export default function Reports() {
         <TabPanel>
           <div className="row mt-3">
             <div className="col-md-12 mb-3">
-              <button className="btn btn-success" onClick={handleExportSales}>
-                📥 Excel'e Aktar
+              <button
+                className="btn btn-success"
+                onClick={handleExportSales}
+                disabled={loading}
+              >
+                {loading ? '⏳ İndiriliyor...' : '📥 Excel\'e Aktar'}
               </button>
             </div>
 
@@ -361,8 +396,12 @@ export default function Reports() {
         <TabPanel>
           <div className="row mt-3">
             <div className="col-md-12 mb-3">
-              <button className="btn btn-success" onClick={handleExportStock}>
-                📥 Excel'e Aktar
+              <button
+                className="btn btn-success"
+                onClick={handleExportStock}
+                disabled={loading}
+              >
+                {loading ? '⏳ İndiriliyor...' : '📥 Excel\'e Aktar'}
               </button>
             </div>
 
@@ -452,8 +491,12 @@ export default function Reports() {
         <TabPanel>
           <div className="row mt-3">
             <div className="col-md-12 mb-3">
-              <button className="btn btn-success" onClick={handleExportExpenses}>
-                📥 Excel'e Aktar
+              <button
+                className="btn btn-success"
+                onClick={handleExportExpenses}
+                disabled={loading}
+              >
+                {loading ? '⏳ İndiriliyor...' : '📥 Excel\'e Aktar'}
               </button>
             </div>
 

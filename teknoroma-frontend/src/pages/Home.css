@@ -396,3 +396,42 @@
 .stat-change i {
   font-size: 0.7rem;
 }
+
+/* Spin Animation for Refresh Button */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Auto-refresh Controls */
+.form-check-label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: white;
+  cursor: pointer;
+}
+
+.form-check-input {
+  cursor: pointer;
+}
+
+.dashboard-header .form-select {
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid white;
+  color: #667eea;
+  font-weight: 600;
+  padding: 0.375rem 0.75rem;
+}
+
+.dashboard-header .form-select:focus {
+  border-color: white;
+  box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.25);
+}

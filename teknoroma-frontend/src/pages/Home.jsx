@@ -6,16 +6,32 @@ export default function Home() {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [autoRefresh, setAutoRefresh] = useState(false);
+  const [refreshInterval, setRefreshInterval] = useState(30); // seconds
+  const [lastRefreshTime, setLastRefreshTime] = useState(null);
 
   useEffect(() => {
     loadDashboardStats();
   }, []);
+
+  // Auto-refresh effect
+  useEffect(() => {
+    if (!autoRefresh) return;
+
+    const interval = setInterval(() => {
+      loadDashboardStats();
+    }, refreshInterval * 1000);
+
+    return () => clearInterval(interval);
+  }, [autoRefresh, refreshInterval]);
 
   const loadDashboardStats = async () => {
     try {
       setLoading(true);
       const data = await reportAPI.getDashboardStats();
       setStats(data);
+      setLastRefreshTime(new Date());
+      setError('');
     } catch (err) {
       console.error('Dashboard yükleme hatası:', err);
       setError('Dashboard verileri yüklenirken bir hata oluştu');
@@ -73,11 +89,54 @@ export default function Home() {
           <p className="mb-0 mt-2" style={{ opacity: 0.9 }}>
             Hoş geldiniz! İşte işletmenizin anlık görünümü
           </p>
+          {lastRefreshTime && (
+            <small className="text-muted">
+              <i className="bi bi-clock me-1"></i>
+              Son güncelleme: {formatDate(lastRefreshTime)}
+            </small>
+          )}
         </div>
-        <button className="btn" onClick={loadDashboardStats}>
-          <i className="bi bi-arrow-clockwise me-2"></i>
-          Yenile
-        </button>
+        <div className="d-flex gap-2 align-items-center">
+          {/* Auto-refresh toggle */}
+          <div className="form-check form-switch">
+            <input
+              className="form-check-input"
+              type="checkbox"
+              id="autoRefreshToggle"
+              checked={autoRefresh}
+              onChange={(e) => setAutoRefresh(e.target.checked)}
+            />
+            <label className="form-check-label" htmlFor="autoRefreshToggle">
+              Otomatik Yenileme
+            </label>
+          </div>
+
+          {/* Refresh interval selector */}
+          {autoRefresh && (
+            <select
+              className="form-select form-select-sm"
+              value={refreshInterval}
+              onChange={(e) => setRefreshInterval(Number(e.target.value))}
+              style={{ width: 'auto' }}
+            >
+              <option value="10">10 saniye</option>
+              <option value="30">30 saniye</option>
+              <option value="60">1 dakika</option>
+              <option value="120">2 dakika</option>
+              <option value="300">5 dakika</option>
+            </select>
+          )}
+
+          {/* Manual refresh button */}
+          <button
+            className="btn btn-primary"
+            onClick={loadDashboardStats}
+            disabled={loading}
+          >
+            <i className={`bi bi-arrow-clockwise me-2 ${loading ? 'spin' : ''}`}></i>
+            Yenile
+          </button>
+        </div>
       </div>
 
       {/* Satış İstatistikleri */}

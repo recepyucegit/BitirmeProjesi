@@ -3,6 +3,7 @@ import { expenseAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import Modal from '../components/Modal';
 import ExpenseForm from '../components/ExpenseForm';
+import ApprovalModal from '../components/ApprovalModal';
 
 const ExpenseList = () => {
   const { user } = useAuth();
@@ -13,6 +14,11 @@ const ExpenseList = () => {
   const [selectedExpense, setSelectedExpense] = useState(null);
   const [formLoading, setFormLoading] = useState(false);
   const [filterStatus, setFilterStatus] = useState('All');
+
+  // Approval modal states
+  const [isApprovalModalOpen, setIsApprovalModalOpen] = useState(false);
+  const [approvalExpense, setApprovalExpense] = useState(null);
+  const [isApproving, setIsApproving] = useState(true); // true = approve, false = reject
 
   // Giderleri yükle
   const fetchExpenses = async () => {
@@ -81,35 +87,29 @@ const ExpenseList = () => {
     }
   };
 
+  // Onay/Red modalını aç
+  const openApprovalModal = (expense, isApproval) => {
+    setApprovalExpense(expense);
+    setIsApproving(isApproval);
+    setIsApprovalModalOpen(true);
+  };
+
   // Gideri onayla veya reddet
-  const handleApprove = async (id, isApproved) => {
-    const confirmMessage = isApproved
-      ? 'Bu gideri onaylamak istediğinizden emin misiniz?'
-      : 'Bu gideri reddetmek istediğinizden emin misiniz?';
-
-    if (!window.confirm(confirmMessage)) {
-      return;
-    }
-
-    const notes = prompt(isApproved ? 'Onay notu (opsiyonel):' : 'Red sebebi:');
-    if (!isApproved && !notes) {
-      alert('Red sebebi zorunludur!');
-      return;
-    }
-
+  const handleApprovalSubmit = async (notes) => {
     try {
       const approveData = {
         approvedBy: user.employeeId || 1, // Employee ID kullanıcıdan gelecek
-        isApproved: isApproved,
-        notes: notes || null
+        isApproved: isApproving,
+        notes: notes
       };
 
-      await expenseAPI.approve(id, approveData);
+      await expenseAPI.approve(approvalExpense.id, approveData);
       await fetchExpenses();
-      alert(isApproved ? 'Gider başarıyla onaylandı!' : 'Gider reddedildi!');
+      alert(isApproving ? 'Gider başarıyla onaylandı!' : 'Gider reddedildi!');
     } catch (err) {
       console.error('Error approving expense:', err);
       alert('İşlem sırasında bir hata oluştu: ' + (err.response?.data?.message || err.message));
+      throw err; // Re-throw to stop modal from closing
     }
   };
 
@@ -290,14 +290,14 @@ const ExpenseList = () => {
                         <>
                           <button
                             className="btn btn-sm btn-success"
-                            onClick={() => handleApprove(expense.id, true)}
+                            onClick={() => openApprovalModal(expense, true)}
                             title="Onayla"
                           >
                             ✓
                           </button>
                           <button
                             className="btn btn-sm btn-danger"
-                            onClick={() => handleApprove(expense.id, false)}
+                            onClick={() => openApprovalModal(expense, false)}
                             title="Reddet"
                           >
                             ✗
@@ -342,6 +342,18 @@ const ExpenseList = () => {
           loading={formLoading}
         />
       </Modal>
+
+      {/* Onay/Red Modal */}
+      <ApprovalModal
+        isOpen={isApprovalModalOpen}
+        onClose={() => {
+          setIsApprovalModalOpen(false);
+          setApprovalExpense(null);
+        }}
+        onSubmit={handleApprovalSubmit}
+        expense={approvalExpense}
+        isApproval={isApproving}
+      />
 
       {/* Gider Özeti */}
       <div style={{ marginTop: '2rem', padding: '1rem', backgroundColor: '#f8f9fa', borderRadius: '8px' }}>

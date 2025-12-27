@@ -15,6 +15,9 @@ import ExpenseList from './pages/ExpenseList';
 import SupplierTransactionList from './pages/SupplierTransactionList';
 import SupplierTransactionForm from './components/SupplierTransactionForm';
 import Reports from './pages/Reports';
+import UserList from './pages/UserList';
+import RoleList from './pages/RoleList';
+import DepartmentList from './pages/DepartmentList';
 
 function App() {
   return (
@@ -45,6 +48,9 @@ function App() {
                       <Route path="/supplier-transactions" element={<SupplierTransactionList />} />
                       <Route path="/supplier-transactions/new" element={<SupplierTransactionForm />} />
                       <Route path="/reports" element={<Reports />} />
+                      <Route path="/users" element={<UserList />} />
+                      <Route path="/roles" element={<RoleList />} />
+                      <Route path="/departments" element={<DepartmentList />} />
                       {/* Redirect unknown routes to home */}
                       <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>

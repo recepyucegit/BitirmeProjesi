@@ -337,6 +337,93 @@ export const supplierTransactionAPI = {
 };
 
 // Report API endpoints
+// User API endpoints
+export const userAPI = {
+  // Tüm kullanıcıları getir
+  getAll: () => api.get('/user'),
+
+  // ID'ye göre kullanıcı getir
+  getById: (id) => api.get(`/user/${id}`),
+
+  // Username'e göre kullanıcı getir
+  getByUsername: (username) => api.get(`/user/username/${username}`),
+
+  // Username var mı kontrol et
+  usernameExists: (username) => api.get(`/user/username/${username}/exists`),
+
+  // Email var mı kontrol et
+  emailExists: (email) => api.get(`/user/email/${email}/exists`),
+
+  // Yeni kullanıcı oluştur
+  create: (data) => api.post('/user', data),
+
+  // Kullanıcı güncelle
+  update: (id, data) => api.put(`/user/${id}`, data),
+
+  // Kullanıcı sil
+  delete: (id) => api.delete(`/user/${id}`),
+};
+
+// Department API endpoints
+export const departmentAPI = {
+  // Tüm departmanları getir
+  getAll: () => api.get('/department'),
+
+  // Aktif departmanları getir
+  getActive: () => api.get('/department/active'),
+
+  // ID'ye göre departman getir
+  getById: (id) => api.get(`/department/${id}`),
+
+  // Koda göre departman getir
+  getByCode: (code) => api.get(`/department/code/${code}`),
+
+  // İsme göre departman getir
+  getByName: (name) => api.get(`/department/name/${name}`),
+
+  // Müdüre göre departmanları getir
+  getByManager: (managerId) => api.get(`/department/manager/${managerId}`),
+
+  // Toplam çalışan sayısı
+  getTotalEmployees: () => api.get('/department/statistics/total-employees'),
+
+  // Toplam bütçe
+  getTotalBudget: () => api.get('/department/statistics/total-budget'),
+
+  // Yeni departman oluştur
+  create: (data) => api.post('/department', data),
+
+  // Departman güncelle
+  update: (id, data) => api.put(`/department/${id}`, data),
+
+  // Departman sil
+  delete: (id) => api.delete(`/department/${id}`),
+};
+
+// Role API endpoints
+export const roleAPI = {
+  // Tüm rolleri getir
+  getAll: () => api.get('/role'),
+
+  // ID'ye göre rol getir
+  getById: (id) => api.get(`/role/${id}`),
+
+  // İsme göre rol getir
+  getByName: (name) => api.get(`/role/name/${name}`),
+
+  // Rol adı var mı kontrol et
+  roleNameExists: (name) => api.get(`/role/name/${name}/exists`),
+
+  // Yeni rol oluştur
+  create: (data) => api.post('/role', data),
+
+  // Rol güncelle
+  update: (id, data) => api.put(`/role/${id}`, data),
+
+  // Rol sil
+  delete: (id) => api.delete(`/role/${id}`),
+};
+
 export const reportAPI = {
   // Dashboard stats
   getDashboardStats: () => api.get('/report/dashboard'),
